@@ -1,6 +1,5 @@
 package com.autoroll;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -14,12 +13,14 @@ public class AutoRollView extends ViewGroup {
     // 动画时间
     private static final int ANIM_TIME = 500;
     // 停留时间
-    private static final int RETENTION_TIME = 3000;
-    // 周期
-    private static final int TOTAL_TIME = ANIM_TIME + RETENTION_TIME;
+    private static final int DEFAULT_INTERVAL = 3000;
+
+    private long mRollInterval = DEFAULT_INTERVAL;
+    private long mAnimCircle = ANIM_TIME;
     private AbsBannerAdapter mAdapter;
-    private ChildViewContainer mChildContainer = new ChildViewContainer();
-    private ValueAnimator mAnim;
+    private ChildViewFactory mViewFactory = new ChildViewFactory();
+    private RollRunnable mRollRunnable;
+    private DelayRunnable mDelayRunnable;
 
     public AutoRollView(Context context) {
         super(context);
@@ -58,137 +59,125 @@ public class AutoRollView extends ViewGroup {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (isAnimating()) {
-            mAnim.cancel();
-        }
+        cancelRolling();
         super.onDetachedFromWindow();
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (mAnim != null && !mAnim.isStarted()) {
-            startAnimator();
+        if (mRollRunnable != null) {
+            postDelayed(mRollRunnable, mRollInterval);
         }
     }
 
     public void setAdapter(AbsBannerAdapter adapter) {
         this.mAdapter = adapter;
-        mChildContainer.setAdapter(adapter);
+        mViewFactory.setAdapter(adapter);
     }
 
-    public boolean isAnimating(){
-        return mAnim != null && mAnim.isStarted();
-    }
-
-    public void cancelAnimIfNeeded(){
-        if (isAnimating()) {
-            mAnim.cancel();
-            mAnim = null;
+    public void cancelRolling(){
+        if (getChildCount() > 1){
+            getChildAt(0).animate().cancel();
+            getChildAt(1).animate().cancel();
         }
+        removeCallbacks(mRollRunnable);
+        removeCallbacks(mDelayRunnable);
+        mRollRunnable = null;
+        mDelayRunnable = null;
     }
 
-    public void startAnim() {
-        cancelAnimIfNeeded();
+    public void startRolling() {
+        if (getChildCount() == 0){
+            addView(mViewFactory.thisView());
+            mViewFactory.updateViews(mViewFactory.thisView(), mAdapter.getItemIndex());
+            addView(mViewFactory.nextView());
+        }
+
+        cancelRolling();
         if (checkSpecCondtion()) {
             return;
         }
 
-        mAnim = ValueAnimator.ofFloat(0f, 1f);
-        mAnim.setDuration(TOTAL_TIME);
-        mAnim.setRepeatCount(ValueAnimator.INFINITE);
-        mAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        post(new Runnable() {
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                if (checkSpecCondtion()) {
-                    animation.cancel();
-                } else {
-                    updateAnim((float) animation.getAnimatedValue());
+            public void run() {
+                if (mRollRunnable == null) {
+                    mRollRunnable = new RollRunnable();
                 }
+                postDelayed(mRollRunnable, mRollInterval);
+                mAdapter.resetItemIndex();
+
+                showIntervalState();
             }
         });
-
-        mAdapter.resetItemIndex();
-        startAnimator();
     }
 
-    private void updateAnim(float animValue) {
-        float limitValue = (float) TOTAL_TIME /(float) ANIM_TIME;
-        float currentValue = animValue * limitValue;
-        if (currentValue < limitValue - 1.0f) {
-            // 停留阶段
-            if (getChildCount() == 0){
-                addView(mChildContainer.thisView(getContext()));
-            } else if (getChildCount() > 1) {
-                removeViewAt(0);
-            }
-            View child = getChildAt(0);
-            mAdapter.addItemIndex();
-            mChildContainer.updateViews(child, mAdapter.getItemIndex());
-            mAdapter.lockItemIndex();
-            child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
-        } else {
-            // 切换动画阶段
-            if (getChildCount() == 0){
-                addView(mChildContainer.thisView(getContext()));
-                addView(mChildContainer.nextView(getContext()));
-            } else if (getChildCount() == 1){
-                addView(mChildContainer.nextView(getContext()));
-            }
+    private void showIntervalState() {
+        View childShow = mViewFactory.thisView();
+        mViewFactory.updateViews(childShow, mAdapter.getItemIndex());
+        childShow.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+        childShow.setVisibility(VISIBLE);
 
-            View childOut = getChildAt(0);
-            View childIn = getChildAt(1);
-
-            int borderPos = (int) (getMeasuredHeight() * (limitValue - currentValue));
-            childOut.layout(0, borderPos - childOut.getMeasuredHeight(), childOut.getMeasuredWidth(), borderPos);
-            childIn.layout(0, borderPos, childIn.getMeasuredWidth(), borderPos + childIn.getMeasuredHeight());
-
-            mChildContainer.updateViews(childOut, mAdapter.getItemIndex());
-            mChildContainer.updateViews(childIn, mAdapter.nextItemIndex());
-            mAdapter.unlockItemIndex();
-        }
-    }
-
-    private void startAnimator() {
-        mAnim.start();
-        mAdapter.lockItemIndex();
+        View childHide = mViewFactory.nextView();
+        mViewFactory.updateViews(childHide, mAdapter.nextItemIndex());
+        childHide.setVisibility(INVISIBLE);
     }
 
     private boolean checkSpecCondtion() {
         if (mAdapter == null || mAdapter.getItemCount() == 0){
-            removeAllViews();
+            cancelRolling();
             return true;
         } else if (mAdapter.getItemCount() == 1) {
-            removeAllViews();
-            View child = mChildContainer.thisView(getContext());
-            addView(child);
-            child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
-            mChildContainer.updateViews(child, 0);
+            showIntervalState();
+            cancelRolling();
             return true;
         }
         return false;
     }
 
+    private class RollRunnable implements Runnable {
+        @Override
+        public void run() {
+            View viewOut = mViewFactory.thisView();
+            mViewFactory.updateViews(viewOut, mAdapter.getItemIndex());
+            viewOut.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+            viewOut.animate().setDuration(mAnimCircle).translationYBy(-getMeasuredHeight()).start();
+
+            View viewIn = mViewFactory.nextView();
+            mViewFactory.updateViews(viewIn, mAdapter.nextItemIndex());
+            viewIn.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+            viewIn.setY(getMeasuredHeight());
+            viewIn.setVisibility(VISIBLE);
+            viewIn.animate().setDuration(mAnimCircle).translationYBy(-getMeasuredHeight()).start();
+
+            if (mDelayRunnable == null){
+                mDelayRunnable = new DelayRunnable();
+            }
+            postDelayed(mDelayRunnable, mAnimCircle);
+        }
+    };
+
+
+    private class DelayRunnable implements Runnable {
+        @Override
+        public void run() {
+            mAdapter.step();
+            mViewFactory.step();
+            showIntervalState();
+            postDelayed(mRollRunnable, mRollInterval);
+        }
+    }
+
     public static abstract class AbsBannerAdapter<T extends ViewHolder> {
         private int mItemIndex;
-        private boolean mLocked;
 
         public abstract T onCreateView(Context context);
         public abstract void updateItem(T holder, int position);
         public abstract int getItemCount();
 
-        private void lockItemIndex(){
-            mLocked = true;
-        }
-
-        private void unlockItemIndex(){
-            mLocked = false;
-        }
-
-        private void addItemIndex() {
-            if (!mLocked) {
-                mItemIndex = nextItemIndex();
-            }
+        private void step() {
+            mItemIndex = nextItemIndex();
         }
 
         private int nextItemIndex() {
@@ -209,7 +198,7 @@ public class AutoRollView extends ViewGroup {
         }
     }
 
-    private class ChildViewContainer{
+    private class ChildViewFactory {
         private ViewHolder[] mViewHolders = new ViewHolder[2];
         private int mViewIndex;
         private AbsBannerAdapter mAdapter;
@@ -218,19 +207,33 @@ public class AutoRollView extends ViewGroup {
             mAdapter = adapter;
         }
 
-        private View thisView(Context context) {
-            if (mViewHolders[mViewIndex] == null) {
-                mViewHolders[mViewIndex] = mAdapter.onCreateView(context);
-            }
-            return mViewHolders[mViewIndex].getView();
+        private View thisView() {
+            return getView(mViewIndex);
         }
 
-        private View nextView(Context context) {
-            mViewIndex++;
-            if (mViewIndex >= mViewHolders.length){
-                mViewIndex = 0;
+        private View nextView() {
+            return getView(next(mViewIndex));
+        }
+
+        private View getView(int indext){
+            if (indext >= mViewHolders.length) {
+                return null;
+            } else if (mViewHolders[indext] == null) {
+                mViewHolders[indext] = mAdapter.onCreateView(getContext());
             }
-            return thisView(context);
+            return mViewHolders[indext].getView();
+        }
+
+        private int next(int index) {
+            index++;
+            if (index >= mViewHolders.length){
+                index = 0;
+            }
+            return index;
+        }
+
+        private void step(){
+            mViewIndex = next(mViewIndex);
         }
 
         private void updateViews(View view, int index){

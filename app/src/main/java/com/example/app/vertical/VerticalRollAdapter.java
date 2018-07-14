@@ -22,8 +22,9 @@ public class VerticalRollAdapter extends AutoRollView.AbsBannerAdapter<VerticalR
     public VerticalRollAdapter() {
         mEntityList = Arrays.asList(
                 new VerticalRollEntity("My Favourite Fruit is Apply"),
-                new VerticalRollEntity("My Favourite Fruit is Banner"),
-                new VerticalRollEntity("My Favourite Fruit is Peach"));
+                new VerticalRollEntity("My Mother's Favourite Fruit is Blueberry"),
+                new VerticalRollEntity("Anne's Favourite Fruit is Banana"),
+                new VerticalRollEntity("Jake Hates Fruit"));
     }
 
     @Override
