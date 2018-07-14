@@ -88,6 +88,7 @@ public class AutoRollView extends ViewGroup {
     }
 
     public void startRolling() {
+        mAdapter.resetItemIndex();
         if (getChildCount() == 0){
             addView(mViewFactory.thisView());
             mViewFactory.updateViews(mViewFactory.thisView(), mAdapter.getItemIndex());
@@ -106,7 +107,6 @@ public class AutoRollView extends ViewGroup {
                     mRollRunnable = new RollRunnable();
                 }
                 postDelayed(mRollRunnable, mRollInterval);
-                mAdapter.resetItemIndex();
 
                 showIntervalState();
             }
