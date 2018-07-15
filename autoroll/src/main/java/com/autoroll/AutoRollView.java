@@ -54,7 +54,9 @@ public class AutoRollView extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-
+        for (int i = 0; i < getChildCount(); i++){
+            getChildAt(i).layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+        }
     }
 
     @Override
@@ -91,7 +93,6 @@ public class AutoRollView extends ViewGroup {
         mAdapter.resetItemIndex();
         if (getChildCount() == 0){
             addView(mViewFactory.thisView());
-            mViewFactory.updateViews(mViewFactory.thisView(), mAdapter.getItemIndex());
             addView(mViewFactory.nextView());
         }
 
@@ -115,13 +116,10 @@ public class AutoRollView extends ViewGroup {
 
     private void showIntervalState() {
         View childShow = mViewFactory.thisView();
-        mViewFactory.updateViews(childShow, mAdapter.getItemIndex());
-        childShow.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+        mViewFactory.updateViews(mViewFactory.thisView(), mAdapter.getItemIndex());
         childShow.setVisibility(VISIBLE);
 
-        View childHide = mViewFactory.nextView();
-        mViewFactory.updateViews(childHide, mAdapter.nextItemIndex());
-        childHide.setVisibility(INVISIBLE);
+        mViewFactory.nextView().setVisibility(INVISIBLE);
     }
 
     private boolean checkSpecCondtion() {
@@ -140,13 +138,10 @@ public class AutoRollView extends ViewGroup {
         @Override
         public void run() {
             View viewOut = mViewFactory.thisView();
-            mViewFactory.updateViews(viewOut, mAdapter.getItemIndex());
-            viewOut.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
             viewOut.animate().setDuration(mAnimCircle).translationYBy(-getMeasuredHeight()).start();
 
             View viewIn = mViewFactory.nextView();
             mViewFactory.updateViews(viewIn, mAdapter.nextItemIndex());
-            viewIn.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
             viewIn.setY(getMeasuredHeight());
             viewIn.setVisibility(VISIBLE);
             viewIn.animate().setDuration(mAnimCircle).translationYBy(-getMeasuredHeight()).start();
