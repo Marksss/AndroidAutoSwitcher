@@ -2,6 +2,7 @@ package com.autoroll;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,11 +17,13 @@ public class AutoRollView extends ViewGroup {
     private static final int DEFAULT_INTERVAL = 3000;
 
     private long mRollInterval = DEFAULT_INTERVAL;
-    private long mAnimCircle = ANIM_TIME;
+    private long mAnimDuration = ANIM_TIME;
     private AbsBannerAdapter mAdapter;
     private ChildViewFactory mViewFactory = new ChildViewFactory();
     private RollRunnable mRollRunnable;
     private DelayRunnable mDelayRunnable;
+    private OnItemClickListener mItemClickListener;
+    private int mActionDownItemIndex = -1;
 
     public AutoRollView(Context context) {
         super(context);
@@ -75,6 +78,47 @@ public class AutoRollView extends ViewGroup {
         if (mRollRunnable != null) {
             postDelayed(mRollRunnable, mRollInterval);
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                if (mItemClickListener != null && mAdapter != null && mAdapter.getItemCount() > 0) {
+                    mActionDownItemIndex = mAdapter.getItemIndex();
+                    return true;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if (mItemClickListener != null && mAdapter != null && mAdapter.getItemCount() > 0 && mAdapter.getItemIndex() == mActionDownItemIndex ){
+                    mItemClickListener.onItemClick(this, mViewFactory.thisView(), mAdapter.getItemIndex());
+                    return true;
+                }
+                performClick();
+                mActionDownItemIndex = -1;
+                break;
+        }
+        return false;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
+        mItemClickListener = itemClickListener;
+    }
+
+    public long getRollInterval() {
+        return mRollInterval;
+    }
+
+    public void setRollInterval(long rollInterval) {
+        mRollInterval = rollInterval;
+    }
+
+    public long getAnimDuration() {
+        return mAnimDuration;
+    }
+
+    public void setAnimDuration(long animDuration) {
+        mAnimDuration = animDuration;
     }
 
     public void setAdapter(AbsBannerAdapter adapter) {
@@ -142,18 +186,18 @@ public class AutoRollView extends ViewGroup {
         @Override
         public void run() {
             View viewOut = mViewFactory.thisView();
-            viewOut.animate().setDuration(mAnimCircle).translationYBy(-getMeasuredHeight()).start();
+            viewOut.animate().setDuration(mAnimDuration).translationYBy(-getMeasuredHeight()).start();
 
             View viewIn = mViewFactory.nextView();
             mViewFactory.updateViews(viewIn, mAdapter.nextItemIndex());
             viewIn.setY(getMeasuredHeight());
             viewIn.setVisibility(VISIBLE);
-            viewIn.animate().setDuration(mAnimCircle).translationYBy(-getMeasuredHeight()).start();
+            viewIn.animate().setDuration(mAnimDuration).translationYBy(-getMeasuredHeight()).start();
 
             if (mDelayRunnable == null){
                 mDelayRunnable = new DelayRunnable();
             }
-            postDelayed(mDelayRunnable, mAnimCircle);
+            postDelayed(mDelayRunnable, mAnimDuration);
         }
     };
 
@@ -161,6 +205,7 @@ public class AutoRollView extends ViewGroup {
     private class DelayRunnable implements Runnable {
         @Override
         public void run() {
+            mActionDownItemIndex = -1;
             mAdapter.step();
             mViewFactory.step();
             showIntervalState();
@@ -262,5 +307,9 @@ public class AutoRollView extends ViewGroup {
         public Context getContext(){
             return mView.getContext();
         }
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(AutoRollView parent, View child, int position);
     }
 }
