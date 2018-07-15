@@ -10,7 +10,21 @@
         android:id="@+id/auto_roll_0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center_horizontal"/>
+
+    <com.autoroll.AutoRollView
+        android:id="@+id/auto_roll_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"/>
+
+    <com.autoroll.AutoRollView
+        android:id="@+id/auto_roll_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>

@@ -8,7 +8,6 @@ import android.widget.TextView;
 import com.autoroll.AutoRollView;
 import com.example.app.R;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,25 +15,25 @@ import java.util.List;
  * Created by shenxl on 2018/7/11.
  */
 
-public class VerticalRollAdapter extends AutoRollView.AbsBannerAdapter<VerticalRollAdapter.MyViewHolder> {
-    List<VerticalRollEntity> mEntityList;
+public class MyAdapter extends AutoRollView.AbsBannerAdapter<MyAdapter.MyViewHolder> {
+    List<MyEntity> mEntityList;
 
-    public VerticalRollAdapter() {
+    public MyAdapter() {
         mEntityList = Arrays.asList(
-                new VerticalRollEntity("My Favourite Fruit is Apply"),
-                new VerticalRollEntity("My Mother's Favourite Fruit is Blueberry"),
-                new VerticalRollEntity("Anne's Favourite Fruit is Banana"),
-                new VerticalRollEntity("Jake Hates Fruit"));
+                new MyEntity("My Favourite Fruit is Apply"),
+                new MyEntity("My Mother's Favourite Fruit is Blueberry"),
+                new MyEntity("Anne's Favourite Fruit is Banana"),
+                new MyEntity("Jake Hates Fruit"));
     }
 
     @Override
-    public VerticalRollAdapter.MyViewHolder onCreateView(Context context) {
+    public MyAdapter.MyViewHolder onCreateView(Context context) {
         return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.vertical_banner,null,false));
     }
 
     @Override
-    public void updateItem(VerticalRollAdapter.MyViewHolder holder, int position) {
-        VerticalRollEntity bean = mEntityList.get(position);
+    public void updateItem(MyAdapter.MyViewHolder holder, int position) {
+        MyEntity bean = mEntityList.get(position);
         holder.title.setText(bean.title);
         holder.stones.setText("X"+position);
     }

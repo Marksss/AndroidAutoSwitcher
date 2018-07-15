@@ -5,6 +5,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
+
+import com.autoroll.strategy.VerticalRollStrategy;
 
 /**
  * Created by shenxl on 2018/7/11.
@@ -23,6 +26,7 @@ public class AutoRollView extends ViewGroup {
     private RollRunnable mRollRunnable;
     private DelayRunnable mDelayRunnable;
     private OnItemClickListener mItemClickListener;
+    private SwitchAnimStrategy mAnimStrategy = new VerticalRollStrategy(true);
     private int mActionDownItemIndex = -1;
 
     public AutoRollView(Context context) {
@@ -121,6 +125,10 @@ public class AutoRollView extends ViewGroup {
         mAnimDuration = animDuration;
     }
 
+    public void setAnimStrategy(SwitchAnimStrategy animStrategy) {
+        mAnimStrategy = animStrategy;
+    }
+
     public void setAdapter(AbsBannerAdapter adapter) {
         this.mAdapter = adapter;
         mViewFactory.setAdapter(adapter);
@@ -185,31 +193,41 @@ public class AutoRollView extends ViewGroup {
     private class RollRunnable implements Runnable {
         @Override
         public void run() {
-            View viewOut = mViewFactory.thisView();
-            viewOut.animate().setDuration(mAnimDuration).translationYBy(-getMeasuredHeight()).start();
+            if (mAnimStrategy != null) {
+                View viewOut = mViewFactory.thisView();
+                mAnimStrategy.beforeAnimOut(AutoRollView.this, viewOut);
+                mAnimStrategy.animOut(AutoRollView.this, viewOut,
+                        viewOut.animate().setDuration(mAnimDuration)).start();
 
-            View viewIn = mViewFactory.nextView();
-            mViewFactory.updateViews(viewIn, mAdapter.nextItemIndex());
-            viewIn.setY(getMeasuredHeight());
-            viewIn.setVisibility(VISIBLE);
-            viewIn.animate().setDuration(mAnimDuration).translationYBy(-getMeasuredHeight()).start();
+                View viewIn = mViewFactory.nextView();
+                mViewFactory.updateViews(viewIn, mAdapter.nextItemIndex());
+                viewIn.setVisibility(VISIBLE);
+                mAnimStrategy.beforeAnimIn(AutoRollView.this, viewIn);
+                mAnimStrategy.animIn(AutoRollView.this, viewIn,
+                        viewIn.animate().setDuration(mAnimDuration)).start();
 
-            if (mDelayRunnable == null){
-                mDelayRunnable = new DelayRunnable();
+                if (mDelayRunnable == null){
+                    mDelayRunnable = new DelayRunnable();
+                }
+                postDelayed(mDelayRunnable, mAnimDuration);
+            } else {
+                gotoInterval();
             }
-            postDelayed(mDelayRunnable, mAnimDuration);
         }
     };
 
+    private void gotoInterval() {
+        mActionDownItemIndex = -1;
+        mAdapter.step();
+        mViewFactory.step();
+        showIntervalState();
+        postDelayed(mRollRunnable, mRollInterval);
+    }
 
     private class DelayRunnable implements Runnable {
         @Override
         public void run() {
-            mActionDownItemIndex = -1;
-            mAdapter.step();
-            mViewFactory.step();
-            showIntervalState();
-            postDelayed(mRollRunnable, mRollInterval);
+            gotoInterval();
         }
     }
 
@@ -311,5 +329,12 @@ public class AutoRollView extends ViewGroup {
 
     public interface OnItemClickListener{
         void onItemClick(AutoRollView parent, View child, int position);
+    }
+
+    public interface SwitchAnimStrategy{
+        void beforeAnimOut(AutoRollView parent, View child);
+        ViewPropertyAnimator animOut(AutoRollView parent, View child, ViewPropertyAnimator animator);
+        void beforeAnimIn(AutoRollView parent, View child);
+        ViewPropertyAnimator animIn(AutoRollView parent, View child, ViewPropertyAnimator animator);
     }
 }
