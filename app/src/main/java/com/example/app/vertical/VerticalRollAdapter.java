@@ -36,12 +36,7 @@ public class VerticalRollAdapter extends AutoRollView.AbsBannerAdapter<VerticalR
     public void updateItem(VerticalRollAdapter.MyViewHolder holder, int position) {
         VerticalRollEntity bean = mEntityList.get(position);
         holder.title.setText(bean.title);
-        if (position % 2 == 0) {
-            holder.stones.setVisibility(View.VISIBLE);
-            holder.stones.setText("X"+position);
-        } else {
-            holder.stones.setVisibility(View.GONE);
-        }
+        holder.stones.setText("X"+position);
     }
 
     @Override

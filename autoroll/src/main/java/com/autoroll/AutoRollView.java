@@ -40,16 +40,20 @@ public class AutoRollView extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int maxWidth = 0;
         int maxHeight = 0;
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
-            child.measure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), heightMeasureSpec);
+            child.measure(widthMeasureSpec, heightMeasureSpec);
+            if (child.getMeasuredWidth() > maxWidth) {
+                maxWidth = child.getMeasuredWidth();
+            }
             if (child.getMeasuredHeight() > maxHeight) {
                 maxHeight = child.getMeasuredHeight();
             }
         }
 
-        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), resolveSize(maxHeight, heightMeasureSpec));
+        setMeasuredDimension(resolveSize(maxWidth, widthMeasureSpec), resolveSize(maxHeight, heightMeasureSpec));
     }
 
     @Override
