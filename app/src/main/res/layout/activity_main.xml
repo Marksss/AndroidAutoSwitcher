@@ -11,20 +11,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        app:switcher_autoStart="true"/>
 
     <com.switcher.AutoSwitchView
         android:id="@+id/auto_roll_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        app:switcher_autoStart="false"
+        app:switcher_repeatCount="1"/>
 
     <com.switcher.AutoSwitchView
         android:id="@+id/auto_roll_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        app:switcher_autoStart="true"
+        app:switcher_repeatCount="-1"/>
 
 </LinearLayout>

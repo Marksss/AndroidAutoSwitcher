@@ -27,7 +27,6 @@ public class MainActivity extends Activity {
 
         AutoSwitchView autoSwitchView = (AutoSwitchView) findViewById(R.id.auto_roll_0);
         autoSwitchView.setAdapter(new MyAdapter(mEntityList));
-        autoSwitchView.startRolling();
         autoSwitchView.setOnItemClickListener(new AutoSwitchView.OnItemClickListener() {
             @Override
             public void onItemClick(AutoSwitchView parent, View child, int position) {
@@ -38,11 +37,10 @@ public class MainActivity extends Activity {
         AutoSwitchView autoSwitchView1 = (AutoSwitchView) findViewById(R.id.auto_roll_1);
         autoSwitchView1.setAdapter(new MyAdapter(mEntityList));
         autoSwitchView1.setAnimStrategy(new VerticalRollStrategy(true));
-        autoSwitchView1.startRolling();
+        autoSwitchView1.start(1000);
 
         AutoSwitchView autoSwitchView2 = (AutoSwitchView) findViewById(R.id.auto_roll_2);
         autoSwitchView2.setAdapter(new MyAdapter(mEntityList));
         autoSwitchView2.setAnimStrategy(new VerticalRollStrategy(false));
-        autoSwitchView2.startRolling();
     }
 }

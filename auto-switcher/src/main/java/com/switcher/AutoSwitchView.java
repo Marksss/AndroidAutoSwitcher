@@ -1,52 +1,70 @@
 package com.switcher;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 import android.widget.FrameLayout;
 
-import com.switcher.strategy.VerticalRollStrategy;
-
 /**
  * Created by shenxl on 2018/7/11.
  */
 
 public class AutoSwitchView extends FrameLayout {
-    // 动画时间
-    private static final int ANIM_TIME = 500;
-    // 停留时间
+    private static final int DEFUALT_ANIM_DURATION = 500;
     private static final int DEFAULT_INTERVAL = 3000;
+    public static final int INFINITE = -1;
 
     private long mRollInterval = DEFAULT_INTERVAL;
-    private long mAnimDuration = ANIM_TIME;
+    private long mAnimDuration = DEFUALT_ANIM_DURATION;
     private AbsBaseAdapter mAdapter;
     private ChildViewFactory mViewFactory = new ChildViewFactory();
-    private RollRunnable mRollRunnable;
-    private DelayRunnable mDelayRunnable;
     private OnItemClickListener mItemClickListener;
     private SwitchAnimStrategy mAnimStrategy;
+    private boolean mWasRunningWhenDetached;
+    private boolean mIsRunning;
+    private boolean mAutoStart;
+    private int mRepeatCount = INFINITE;
     private int mActionDownItemIndex = -1;
 
     public AutoSwitchView(Context context) {
         super(context);
+        init(null);
     }
 
     public AutoSwitchView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(attrs);
     }
 
     public AutoSwitchView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(attrs);
     }
 
     public AutoSwitchView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        init(attrs);
+    }
+
+    private void init(AttributeSet attrs) {
+        if (attrs != null){
+            TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.AutoSwitchView);
+            if (ta.getBoolean(R.styleable.AutoSwitchView_switcher_autoStart, false)) {
+                mAutoStart = true;
+            }
+            if (ta.hasValue(R.styleable.AutoSwitchView_switcher_repeatCount)) {
+                setRepeatCount(ta.getInt(R.styleable.AutoSwitchView_switcher_repeatCount, INFINITE));
+            }
+            ta.recycle();
+        }
     }
 
     @Override
     protected void onDetachedFromWindow() {
+        mWasRunningWhenDetached = isRunning();
         cancelRolling();
         super.onDetachedFromWindow();
     }
@@ -54,8 +72,10 @@ public class AutoSwitchView extends FrameLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (mRollRunnable != null) {
-            postDelayed(mRollRunnable, mRollInterval);
+        if (mWasRunningWhenDetached) {
+            postDelayed(mSwitchAnimRunnable, mRollInterval);
+        } else if (mAutoStart) {
+            start();
         }
     }
 
@@ -80,8 +100,20 @@ public class AutoSwitchView extends FrameLayout {
         return false;
     }
 
+    public boolean isRunning(){
+        return mIsRunning;
+    }
+
     public void setOnItemClickListener(OnItemClickListener itemClickListener) {
         mItemClickListener = itemClickListener;
+    }
+
+    public int getRepeatCount() {
+        return mRepeatCount;
+    }
+
+    public void setRepeatCount(int repeatCount) {
+        mRepeatCount = repeatCount;
     }
 
     public long getRollInterval() {
@@ -114,13 +146,17 @@ public class AutoSwitchView extends FrameLayout {
             getChildAt(0).animate().cancel();
             getChildAt(1).animate().cancel();
         }
-        removeCallbacks(mRollRunnable);
-        removeCallbacks(mDelayRunnable);
-        mRollRunnable = null;
-        mDelayRunnable = null;
+        removeCallbacks(mSwitchAnimRunnable);
+        removeCallbacks(mAnimDelayRunnable);
+        removeCallbacks(mStartDelayRunnable);
+        mIsRunning = false;
     }
 
-    public void startRolling() {
+    public void start() {
+        start(0);
+    }
+
+    public void start(long delayMillis) {
         mAdapter.resetItemIndex();
         if (getChildCount() == 0){
             addView(mViewFactory.thisView());
@@ -132,17 +168,8 @@ public class AutoSwitchView extends FrameLayout {
             return;
         }
 
-        post(new Runnable() {
-            @Override
-            public void run() {
-                if (mRollRunnable == null) {
-                    mRollRunnable = new RollRunnable();
-                }
-                postDelayed(mRollRunnable, mRollInterval);
-
-                showIntervalState();
-            }
-        });
+        removeCallbacks(mStartDelayRunnable);
+        postDelayed(mStartDelayRunnable, delayMillis);
     }
 
     private void showIntervalState() {
@@ -165,7 +192,7 @@ public class AutoSwitchView extends FrameLayout {
         return false;
     }
 
-    private class RollRunnable implements Runnable {
+    private Runnable mSwitchAnimRunnable = new Runnable() {
         @Override
         public void run() {
             if (mAnimStrategy != null) {
@@ -180,34 +207,39 @@ public class AutoSwitchView extends FrameLayout {
                 mAnimStrategy.beforeAnimIn(AutoSwitchView.this, viewIn);
                 mAnimStrategy.animIn(AutoSwitchView.this, viewIn,
                         viewIn.animate().setDuration(mAnimDuration)).start();
+            }
+            postDelayed(mAnimDelayRunnable, mAnimStrategy == null ? 0 : mAnimDuration);
+        }
+    };
 
-                if (mDelayRunnable == null){
-                    mDelayRunnable = new DelayRunnable();
-                }
-                postDelayed(mDelayRunnable, mAnimDuration);
+    private Runnable mAnimDelayRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mActionDownItemIndex = -1;
+            mAdapter.step();
+            mViewFactory.step();
+            showIntervalState();
+            if (mRepeatCount == INFINITE || mAdapter.getRepeatedCount() < mRepeatCount) {
+                postDelayed(mSwitchAnimRunnable, mRollInterval);
             } else {
-                gotoInterval();
+                mIsRunning = false;
             }
         }
     };
 
-    private void gotoInterval() {
-        mActionDownItemIndex = -1;
-        mAdapter.step();
-        mViewFactory.step();
-        showIntervalState();
-        postDelayed(mRollRunnable, mRollInterval);
-    }
-
-    private class DelayRunnable implements Runnable {
+    private Runnable mStartDelayRunnable = new Runnable() {
         @Override
         public void run() {
-            gotoInterval();
+            mIsRunning = true;
+            postDelayed(mSwitchAnimRunnable, mRollInterval);
+
+            showIntervalState();
         }
-    }
+    };
 
     public static abstract class AbsBaseAdapter<T extends AutoSwitchView.ViewHolder> {
         private int mItemIndex;
+        private int mRepeatedCount;
 
         public abstract T onCreateView(Context context);
         public abstract void updateItem(T holder, int position);
@@ -222,16 +254,22 @@ public class AutoSwitchView extends FrameLayout {
             i++;
             if (i >= getItemCount()){
                 i = 0;
+                mRepeatedCount++;
             }
             return i;
         }
 
         private void resetItemIndex(){
             mItemIndex = 0;
+            mRepeatedCount = 0;
         }
 
         private int getItemIndex() {
             return mItemIndex;
+        }
+
+        public int getRepeatedCount() {
+            return mRepeatedCount;
         }
     }
 
