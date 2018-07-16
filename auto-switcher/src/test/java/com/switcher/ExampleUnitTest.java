@@ -1,4 +1,4 @@
-package com.autoroll;
+package com.switcher;
 
 import org.junit.Test;
 

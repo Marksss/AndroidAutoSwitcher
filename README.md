@@ -1,2 +1,2 @@
-# LightWeightAutoRollView
-AutoRollView can be used as a auto-rolling banner
+# LightWeightAutoSwicher
+AutoSwitchView can be used as a auto-rolling banner

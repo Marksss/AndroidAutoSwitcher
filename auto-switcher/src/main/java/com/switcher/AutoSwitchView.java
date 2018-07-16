@@ -1,19 +1,19 @@
-package com.autoroll;
+package com.switcher;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
+import android.widget.FrameLayout;
 
-import com.autoroll.strategy.VerticalRollStrategy;
+import com.switcher.strategy.VerticalRollStrategy;
 
 /**
  * Created by shenxl on 2018/7/11.
  */
 
-public class AutoRollView extends ViewGroup {
+public class AutoSwitchView extends FrameLayout {
     // 动画时间
     private static final int ANIM_TIME = 500;
     // 停留时间
@@ -21,53 +21,28 @@ public class AutoRollView extends ViewGroup {
 
     private long mRollInterval = DEFAULT_INTERVAL;
     private long mAnimDuration = ANIM_TIME;
-    private AbsBannerAdapter mAdapter;
+    private AbsBaseAdapter mAdapter;
     private ChildViewFactory mViewFactory = new ChildViewFactory();
     private RollRunnable mRollRunnable;
     private DelayRunnable mDelayRunnable;
     private OnItemClickListener mItemClickListener;
-    private SwitchAnimStrategy mAnimStrategy = new VerticalRollStrategy(true);
+    private SwitchAnimStrategy mAnimStrategy;
     private int mActionDownItemIndex = -1;
 
-    public AutoRollView(Context context) {
+    public AutoSwitchView(Context context) {
         super(context);
     }
 
-    public AutoRollView(Context context, AttributeSet attrs) {
+    public AutoSwitchView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public AutoRollView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public AutoSwitchView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public AutoRollView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public AutoSwitchView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int maxWidth = 0;
-        int maxHeight = 0;
-        for (int i = 0; i < getChildCount(); i++) {
-            View child = getChildAt(i);
-            child.measure(widthMeasureSpec, heightMeasureSpec);
-            if (child.getMeasuredWidth() > maxWidth) {
-                maxWidth = child.getMeasuredWidth();
-            }
-            if (child.getMeasuredHeight() > maxHeight) {
-                maxHeight = child.getMeasuredHeight();
-            }
-        }
-
-        setMeasuredDimension(resolveSize(maxWidth, widthMeasureSpec), resolveSize(maxHeight, heightMeasureSpec));
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        for (int i = 0; i < getChildCount(); i++){
-            getChildAt(i).layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
-        }
     }
 
     @Override
@@ -129,7 +104,7 @@ public class AutoRollView extends ViewGroup {
         mAnimStrategy = animStrategy;
     }
 
-    public void setAdapter(AbsBannerAdapter adapter) {
+    public void setAdapter(AbsBaseAdapter adapter) {
         this.mAdapter = adapter;
         mViewFactory.setAdapter(adapter);
     }
@@ -195,15 +170,15 @@ public class AutoRollView extends ViewGroup {
         public void run() {
             if (mAnimStrategy != null) {
                 View viewOut = mViewFactory.thisView();
-                mAnimStrategy.beforeAnimOut(AutoRollView.this, viewOut);
-                mAnimStrategy.animOut(AutoRollView.this, viewOut,
+                mAnimStrategy.beforeAnimOut(AutoSwitchView.this, viewOut);
+                mAnimStrategy.animOut(AutoSwitchView.this, viewOut,
                         viewOut.animate().setDuration(mAnimDuration)).start();
 
                 View viewIn = mViewFactory.nextView();
                 mViewFactory.updateViews(viewIn, mAdapter.nextItemIndex());
                 viewIn.setVisibility(VISIBLE);
-                mAnimStrategy.beforeAnimIn(AutoRollView.this, viewIn);
-                mAnimStrategy.animIn(AutoRollView.this, viewIn,
+                mAnimStrategy.beforeAnimIn(AutoSwitchView.this, viewIn);
+                mAnimStrategy.animIn(AutoSwitchView.this, viewIn,
                         viewIn.animate().setDuration(mAnimDuration)).start();
 
                 if (mDelayRunnable == null){
@@ -231,7 +206,7 @@ public class AutoRollView extends ViewGroup {
         }
     }
 
-    public static abstract class AbsBannerAdapter<T extends ViewHolder> {
+    public static abstract class AbsBaseAdapter<T extends AutoSwitchView.ViewHolder> {
         private int mItemIndex;
 
         public abstract T onCreateView(Context context);
@@ -263,9 +238,9 @@ public class AutoRollView extends ViewGroup {
     private class ChildViewFactory {
         private ViewHolder[] mViewHolders = new ViewHolder[2];
         private int mViewIndex;
-        private AbsBannerAdapter mAdapter;
+        private AbsBaseAdapter mAdapter;
 
-        public void setAdapter(AbsBannerAdapter adapter) {
+        public void setAdapter(AbsBaseAdapter adapter) {
             mAdapter = adapter;
         }
 
@@ -328,13 +303,13 @@ public class AutoRollView extends ViewGroup {
     }
 
     public interface OnItemClickListener{
-        void onItemClick(AutoRollView parent, View child, int position);
+        void onItemClick(AutoSwitchView parent, View child, int position);
     }
 
     public interface SwitchAnimStrategy{
-        void beforeAnimOut(AutoRollView parent, View child);
-        ViewPropertyAnimator animOut(AutoRollView parent, View child, ViewPropertyAnimator animator);
-        void beforeAnimIn(AutoRollView parent, View child);
-        ViewPropertyAnimator animIn(AutoRollView parent, View child, ViewPropertyAnimator animator);
+        void beforeAnimOut(AutoSwitchView parent, View child);
+        ViewPropertyAnimator animOut(AutoSwitchView parent, View child, ViewPropertyAnimator animator);
+        void beforeAnimIn(AutoSwitchView parent, View child);
+        ViewPropertyAnimator animIn(AutoSwitchView parent, View child, ViewPropertyAnimator animator);
     }
 }

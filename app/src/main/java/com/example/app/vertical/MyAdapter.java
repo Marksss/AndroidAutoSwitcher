@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.autoroll.AutoRollView;
+import com.switcher.AutoSwitchView;
 import com.example.app.R;
 
 import java.util.Arrays;
@@ -15,15 +15,11 @@ import java.util.List;
  * Created by shenxl on 2018/7/11.
  */
 
-public class MyAdapter extends AutoRollView.AbsBannerAdapter<MyAdapter.MyViewHolder> {
+public class MyAdapter extends AutoSwitchView.AbsBaseAdapter<MyAdapter.MyViewHolder> {
     List<MyEntity> mEntityList;
 
-    public MyAdapter() {
-        mEntityList = Arrays.asList(
-                new MyEntity("My Favourite Fruit is Apply"),
-                new MyEntity("My Mother's Favourite Fruit is Blueberry"),
-                new MyEntity("Anne's Favourite Fruit is Banana"),
-                new MyEntity("Jake Hates Fruit"));
+    public MyAdapter(List<MyEntity> entityList) {
+        mEntityList = entityList;
     }
 
     @Override
@@ -43,7 +39,7 @@ public class MyAdapter extends AutoRollView.AbsBannerAdapter<MyAdapter.MyViewHol
         return mEntityList == null ? 0 : mEntityList.size();
     }
 
-    public class MyViewHolder extends AutoRollView.ViewHolder {
+    public class MyViewHolder extends AutoSwitchView.ViewHolder {
         TextView title;
         TextView stones;
 

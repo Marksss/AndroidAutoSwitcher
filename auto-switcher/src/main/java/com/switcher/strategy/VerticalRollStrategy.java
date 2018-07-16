@@ -1,15 +1,15 @@
-package com.autoroll.strategy;
+package com.switcher.strategy;
 
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 
-import com.autoroll.AutoRollView;
+import com.switcher.AutoSwitchView;
 
 /**
  * Created by shenxl on 2018/7/15.
  */
 
-public class VerticalRollStrategy implements AutoRollView.SwitchAnimStrategy {
+public class VerticalRollStrategy implements AutoSwitchView.SwitchAnimStrategy {
     private boolean mFromTop = true;
 
     public VerticalRollStrategy(boolean fromTop) {
@@ -17,22 +17,22 @@ public class VerticalRollStrategy implements AutoRollView.SwitchAnimStrategy {
     }
 
     @Override
-    public void beforeAnimOut(AutoRollView parent, View child) {
+    public void beforeAnimOut(AutoSwitchView parent, View child) {
 
     }
 
     @Override
-    public ViewPropertyAnimator animOut(AutoRollView parent, View child, ViewPropertyAnimator animator) {
+    public ViewPropertyAnimator animOut(AutoSwitchView parent, View child, ViewPropertyAnimator animator) {
         return animator.translationYBy(mFromTop ? parent.getMeasuredHeight() : -parent.getMeasuredHeight());
     }
 
     @Override
-    public void beforeAnimIn(AutoRollView parent, View child) {
+    public void beforeAnimIn(AutoSwitchView parent, View child) {
         child.setY(mFromTop ? -parent.getMeasuredHeight() : parent.getMeasuredHeight());
     }
 
     @Override
-    public ViewPropertyAnimator animIn(AutoRollView parent, View child, ViewPropertyAnimator animator) {
+    public ViewPropertyAnimator animIn(AutoSwitchView parent, View child, ViewPropertyAnimator animator) {
         return animator.translationYBy(mFromTop ? parent.getMeasuredHeight() : -parent.getMeasuredHeight());
     }
 }
