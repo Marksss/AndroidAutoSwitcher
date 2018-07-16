@@ -17,7 +17,7 @@ public class AutoSwitchView extends FrameLayout {
     private static final int DEFAULT_INTERVAL = 3000;
     public static final int INFINITE = -1;
 
-    private long mRollInterval = DEFAULT_INTERVAL;
+    private long mInterval = DEFAULT_INTERVAL;
     private long mAnimDuration = DEFUALT_ANIM_DURATION;
     private AbsBaseAdapter mAdapter;
     private ChildViewFactory mViewFactory = new ChildViewFactory();
@@ -58,6 +58,12 @@ public class AutoSwitchView extends FrameLayout {
             if (ta.hasValue(R.styleable.AutoSwitchView_switcher_repeatCount)) {
                 setRepeatCount(ta.getInt(R.styleable.AutoSwitchView_switcher_repeatCount, INFINITE));
             }
+            if (ta.hasValue(R.styleable.AutoSwitchView_switcher_interval)) {
+                setInterval(ta.getInt(R.styleable.AutoSwitchView_switcher_interval, DEFAULT_INTERVAL));
+            }
+            if (ta.hasValue(R.styleable.AutoSwitchView_switcher_animDuration)) {
+                setAnimDuration(ta.getInt(R.styleable.AutoSwitchView_switcher_animDuration, DEFUALT_ANIM_DURATION));
+            }
             ta.recycle();
         }
     }
@@ -73,7 +79,7 @@ public class AutoSwitchView extends FrameLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (mWasRunningWhenDetached) {
-            postDelayed(mSwitchAnimRunnable, mRollInterval);
+            postDelayed(mSwitchAnimRunnable, mInterval);
         } else if (mAutoStart) {
             start();
         }
@@ -116,12 +122,12 @@ public class AutoSwitchView extends FrameLayout {
         mRepeatCount = repeatCount;
     }
 
-    public long getRollInterval() {
-        return mRollInterval;
+    public long getInterval() {
+        return mInterval;
     }
 
-    public void setRollInterval(long rollInterval) {
-        mRollInterval = rollInterval;
+    public void setInterval(long interval) {
+        mInterval = interval;
     }
 
     public long getAnimDuration() {
@@ -220,7 +226,7 @@ public class AutoSwitchView extends FrameLayout {
             mViewFactory.step();
             showIntervalState();
             if (mRepeatCount == INFINITE || mAdapter.getRepeatedCount() < mRepeatCount) {
-                postDelayed(mSwitchAnimRunnable, mRollInterval);
+                postDelayed(mSwitchAnimRunnable, mInterval);
             } else {
                 mIsRunning = false;
             }
@@ -231,7 +237,7 @@ public class AutoSwitchView extends FrameLayout {
         @Override
         public void run() {
             mIsRunning = true;
-            postDelayed(mSwitchAnimRunnable, mRollInterval);
+            postDelayed(mSwitchAnimRunnable, mInterval);
 
             showIntervalState();
         }
