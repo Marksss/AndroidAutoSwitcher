@@ -1,4 +1,4 @@
-package com.example.app.vertical;
+package com.example.app;
 
 /**
  * Created by shenxl on 2018/7/14.

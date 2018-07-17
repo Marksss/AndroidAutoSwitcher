@@ -199,18 +199,19 @@ public class AutoSwitchView extends FrameLayout {
     private Runnable mSwitchAnimRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mAnimStrategy != null) {
+            if (mAnimStrategy != null && mAnimDuration != 0) {
                 View viewOut = mViewFactory.thisView();
+                mViewFactory.updateViews(viewOut, mAdapter.getItemIndex());
                 mAnimStrategy.beforeAnimOut(AutoSwitchView.this, viewOut);
                 mAnimStrategy.animOut(AutoSwitchView.this, viewOut,
-                        viewOut.animate().setDuration(mAnimDuration)).start();
+                        viewOut.animate().setDuration(mAnimDuration));
 
                 View viewIn = mViewFactory.nextView();
                 mViewFactory.updateViews(viewIn, mAdapter.nextItemIndex());
                 viewIn.setVisibility(VISIBLE);
                 mAnimStrategy.beforeAnimIn(AutoSwitchView.this, viewIn);
                 mAnimStrategy.animIn(AutoSwitchView.this, viewIn,
-                        viewIn.animate().setDuration(mAnimDuration)).start();
+                        viewIn.animate().setDuration(mAnimDuration));
             }
             postDelayed(mAnimDelayRunnable, mAnimStrategy == null ? 0 : mAnimDuration);
         }

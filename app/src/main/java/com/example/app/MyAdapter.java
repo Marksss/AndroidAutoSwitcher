@@ -1,4 +1,4 @@
-package com.example.app.vertical;
+package com.example.app;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,9 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.switcher.AutoSwitchView;
-import com.example.app.R;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
