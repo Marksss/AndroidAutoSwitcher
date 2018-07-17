@@ -13,7 +13,8 @@
         android:layout_marginTop="30dp"
         android:layout_gravity="center_horizontal"
         app:switcher_interval="2000"
-        app:switcher_autoStart="true"/>
+        app:switcher_autoStart="true"
+        app:switcher_repeatCount="2"/>
 
     <com.switcher.AutoSwitchView
         android:id="@+id/auto_roll_1"
@@ -21,17 +22,35 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
-        app:switcher_autoStart="false"
-        app:switcher_repeatCount="1"/>
+        app:switcher_animDuration="300"
+        app:switcher_autoStart="true"/>
 
     <com.switcher.AutoSwitchView
         android:id="@+id/auto_roll_2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        app:switcher_interval="0"
+        app:switcher_animDuration="2000"
+        app:switcher_autoStart="false"/>
+
+    <com.switcher.AutoSwitchView
+        android:id="@+id/auto_roll_3"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
         app:switcher_animDuration="1000"
-        app:switcher_autoStart="true"
-        app:switcher_repeatCount="-1"/>
+        app:switcher_autoStart="true"/>
+
+    <com.switcher.AutoSwitchView
+        android:id="@+id/auto_roll_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        app:switcher_animDuration="800"
+        app:switcher_autoStart="true"/>
 
 </LinearLayout>

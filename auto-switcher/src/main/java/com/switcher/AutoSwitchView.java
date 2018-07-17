@@ -163,18 +163,17 @@ public class AutoSwitchView extends FrameLayout {
     }
 
     public void start(long delayMillis) {
-        mAdapter.resetItemIndex();
+        cancelRolling();
+        if (checkNoAnimCondtions()) {
+            return;
+        }
+
         if (getChildCount() == 0){
             addView(mViewFactory.thisView());
             addView(mViewFactory.nextView());
         }
 
-        cancelRolling();
-        if (checkSpecCondtion()) {
-            return;
-        }
-
-        removeCallbacks(mStartDelayRunnable);
+        mAdapter.resetItemIndex();
         postDelayed(mStartDelayRunnable, delayMillis);
     }
 
@@ -182,17 +181,16 @@ public class AutoSwitchView extends FrameLayout {
         View childShow = mViewFactory.thisView();
         mViewFactory.updateViews(mViewFactory.thisView(), mAdapter.getItemIndex());
         childShow.setVisibility(VISIBLE);
+        childShow.animate().cancel();
 
         mViewFactory.nextView().setVisibility(INVISIBLE);
     }
 
-    private boolean checkSpecCondtion() {
+    private boolean checkNoAnimCondtions() {
         if (mAdapter == null || mAdapter.getItemCount() == 0){
-            cancelRolling();
             return true;
         } else if (mAdapter.getItemCount() == 1) {
             showIntervalState();
-            cancelRolling();
             return true;
         }
         return false;
@@ -224,7 +222,9 @@ public class AutoSwitchView extends FrameLayout {
             mActionDownItemIndex = -1;
             mAdapter.step();
             mViewFactory.step();
-            showIntervalState();
+            if (mInterval > 0) {
+                showIntervalState();
+            }
             if (mRepeatCount == INFINITE || mAdapter.getRepeatedCount() < mRepeatCount) {
                 postDelayed(mSwitchAnimRunnable, mInterval);
             } else {
@@ -238,8 +238,9 @@ public class AutoSwitchView extends FrameLayout {
         public void run() {
             mIsRunning = true;
             postDelayed(mSwitchAnimRunnable, mInterval);
-
-            showIntervalState();
+            if (mInterval > 0) {
+                showIntervalState();
+            }
         }
     };
 

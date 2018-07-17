@@ -3,11 +3,15 @@ package com.example.app;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Toast;
 
 import com.example.app.vertical.MyEntity;
 import com.switcher.AutoSwitchView;
-import com.switcher.strategy.VerticalRollStrategy;
+import com.switcher.strategy.CarouselStrategy;
 import com.example.app.vertical.MyAdapter;
 
 import java.util.Arrays;
@@ -36,11 +40,25 @@ public class MainActivity extends Activity {
 
         AutoSwitchView autoSwitchView1 = (AutoSwitchView) findViewById(R.id.auto_roll_1);
         autoSwitchView1.setAdapter(new MyAdapter(mEntityList));
-        autoSwitchView1.setAnimStrategy(new VerticalRollStrategy(true));
-        autoSwitchView1.start(1000);
+        autoSwitchView1.setAnimStrategy(new CarouselStrategy().
+                setInterpolator(new OvershootInterpolator(0.8f)));
 
         AutoSwitchView autoSwitchView2 = (AutoSwitchView) findViewById(R.id.auto_roll_2);
         autoSwitchView2.setAdapter(new MyAdapter(mEntityList));
-        autoSwitchView2.setAnimStrategy(new VerticalRollStrategy(false));
+        autoSwitchView2.setAnimStrategy(new CarouselStrategy().
+                setMode(CarouselStrategy.Mode.left2Right).
+                setInterpolator(new LinearInterpolator()));
+        autoSwitchView2.start(1000);
+
+        AutoSwitchView autoSwitchView3 = (AutoSwitchView) findViewById(R.id.auto_roll_3);
+        autoSwitchView3.setAdapter(new MyAdapter(mEntityList));
+        autoSwitchView3.setAnimStrategy(new CarouselStrategy().
+                setMode(CarouselStrategy.Mode.right2Left).
+                setInterpolator(new DecelerateInterpolator(1.5f)));
+
+//        AutoSwitchView autoSwitchView4 = (AutoSwitchView) findViewById(R.id.auto_roll_4);
+//        autoSwitchView4.setAdapter(new MyAdapter(mEntityList));
+//        autoSwitchView4.setAnimStrategy(new CarouselStrategy().setMode(CarouselStrategy.Mode.right2Left));
+
     }
 }
