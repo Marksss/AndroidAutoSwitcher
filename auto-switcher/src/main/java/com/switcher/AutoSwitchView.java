@@ -3,31 +3,20 @@ package com.switcher;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewPropertyAnimator;
-import android.widget.FrameLayout;
 
 /**
  * Created by shenxl on 2018/7/11.
  */
 
-public class AutoSwitchView extends FrameLayout {
-    private static final int DEFUALT_ANIM_DURATION = 500;
-    private static final int DEFAULT_INTERVAL = 3000;
+public class AutoSwitchView extends BaseSwitchView {
     public static final int INFINITE = -1;
 
-    private long mInterval = DEFAULT_INTERVAL;
-    private long mAnimDuration = DEFUALT_ANIM_DURATION;
-    private AbsBaseAdapter mAdapter;
-    private ChildViewFactory mViewFactory = new ChildViewFactory();
-    private OnItemClickListener mItemClickListener;
-    private SwitchAnimStrategy mAnimStrategy;
+    private SwitchStrategy mSwitchStrategy;
     private boolean mWasRunningWhenDetached;
     private boolean mIsRunning;
     private boolean mAutoStart;
+    private int mHasRepeatedCount;
     private int mRepeatCount = INFINITE;
-    private int mActionDownItemIndex = -1;
 
     public AutoSwitchView(Context context) {
         super(context);
@@ -58,20 +47,18 @@ public class AutoSwitchView extends FrameLayout {
             if (ta.hasValue(R.styleable.AutoSwitchView_switcher_repeatCount)) {
                 setRepeatCount(ta.getInt(R.styleable.AutoSwitchView_switcher_repeatCount, INFINITE));
             }
-            if (ta.hasValue(R.styleable.AutoSwitchView_switcher_interval)) {
-                setInterval(ta.getInt(R.styleable.AutoSwitchView_switcher_interval, DEFAULT_INTERVAL));
-            }
-            if (ta.hasValue(R.styleable.AutoSwitchView_switcher_animDuration)) {
-                setAnimDuration(ta.getInt(R.styleable.AutoSwitchView_switcher_animDuration, DEFUALT_ANIM_DURATION));
-            }
             ta.recycle();
         }
+        mSwitchStrategy = StrategyFactory.makeDefaultStrategy();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        mWasRunningWhenDetached = isRunning();
-        cancelRolling();
+        mWasRunningWhenDetached = mIsRunning;
+        mIsRunning = false;
+        if (mSwitchStrategy != null) {
+            mSwitchStrategy.stop();
+        }
         super.onDetachedFromWindow();
     }
 
@@ -79,39 +66,17 @@ public class AutoSwitchView extends FrameLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (mWasRunningWhenDetached) {
-            postDelayed(mSwitchAnimRunnable, mInterval);
+            mIsRunning = true;
+            if (mSwitchStrategy != null) {
+                mSwitchStrategy.restart();
+            }
         } else if (mAutoStart) {
-            start();
+            startSwitcher();
         }
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:
-                if (mItemClickListener != null && mAdapter != null && mAdapter.getItemCount() > 0) {
-                    mActionDownItemIndex = mAdapter.getItemIndex();
-                    return true;
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                if (mItemClickListener != null && mAdapter != null && mAdapter.getItemCount() > 0 && mAdapter.getItemIndex() == mActionDownItemIndex ){
-                    mItemClickListener.onItemClick(this, mViewFactory.thisView(), mAdapter.getItemIndex());
-                    return true;
-                }
-                performClick();
-                mActionDownItemIndex = -1;
-                break;
-        }
-        return false;
-    }
-
-    public boolean isRunning(){
-        return mIsRunning;
-    }
-
-    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
-        mItemClickListener = itemClickListener;
+    public void setSwitchStrategy(SwitchStrategy switchStrategy) {
+        mSwitchStrategy = switchStrategy;
     }
 
     public int getRepeatCount() {
@@ -122,240 +87,53 @@ public class AutoSwitchView extends FrameLayout {
         mRepeatCount = repeatCount;
     }
 
-    public long getInterval() {
-        return mInterval;
-    }
-
-    public void setInterval(long interval) {
-        mInterval = interval;
-    }
-
-    public long getAnimDuration() {
-        return mAnimDuration;
-    }
-
-    public void setAnimDuration(long animDuration) {
-        mAnimDuration = animDuration;
-    }
-
-    public void setAnimStrategy(SwitchAnimStrategy animStrategy) {
-        mAnimStrategy = animStrategy;
-    }
-
-    public void setAdapter(AbsBaseAdapter adapter) {
-        this.mAdapter = adapter;
-        mViewFactory.setAdapter(adapter);
-    }
-
-    public void cancelRolling(){
-        if (getChildCount() > 1){
-            getChildAt(0).animate().cancel();
-            getChildAt(1).animate().cancel();
-        }
-        removeCallbacks(mSwitchAnimRunnable);
-        removeCallbacks(mAnimDelayRunnable);
-        removeCallbacks(mStartDelayRunnable);
-        mIsRunning = false;
-    }
-
-    public void start() {
-        start(0);
-    }
-
-    public void start(long delayMillis) {
-        cancelRolling();
-        if (checkNoAnimCondtions()) {
-            return;
-        }
-
-        if (getChildCount() == 0){
-            addView(mViewFactory.thisView());
-            addView(mViewFactory.nextView());
-        }
-
-        mAdapter.resetItemIndex();
-        postDelayed(mStartDelayRunnable, delayMillis);
-    }
-
-    private void showIntervalState() {
-        View childShow = mViewFactory.thisView();
-        mViewFactory.updateViews(mViewFactory.thisView(), mAdapter.getItemIndex());
-        childShow.setVisibility(VISIBLE);
-        childShow.animate().cancel();
-
-        mViewFactory.nextView().setVisibility(INVISIBLE);
+    boolean needStop(){
+        return checkNoAnimCondtions() || (mRepeatCount != INFINITE && mHasRepeatedCount >= mRepeatCount) ;
     }
 
     private boolean checkNoAnimCondtions() {
-        if (mAdapter == null || mAdapter.getItemCount() == 0){
+        if (getAdapter() == null || getAdapter().getItemCount() == 0){
             return true;
-        } else if (mAdapter.getItemCount() == 1) {
+        } else if (getAdapter().getItemCount() == 1) {
             showIntervalState();
             return true;
         }
         return false;
     }
 
-    private Runnable mSwitchAnimRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (mAnimStrategy != null && mAnimDuration != 0) {
-                View viewOut = mViewFactory.thisView();
-                mViewFactory.updateViews(viewOut, mAdapter.getItemIndex());
-                mAnimStrategy.beforeAnimOut(AutoSwitchView.this, viewOut);
-                mAnimStrategy.animOut(AutoSwitchView.this, viewOut,
-                        viewOut.animate().setDuration(mAnimDuration));
-
-                View viewIn = mViewFactory.nextView();
-                mViewFactory.updateViews(viewIn, mAdapter.nextItemIndex());
-                viewIn.setVisibility(VISIBLE);
-                mAnimStrategy.beforeAnimIn(AutoSwitchView.this, viewIn);
-                mAnimStrategy.animIn(AutoSwitchView.this, viewIn,
-                        viewIn.animate().setDuration(mAnimDuration));
-            }
-            postDelayed(mAnimDelayRunnable, mAnimStrategy == null ? 0 : mAnimDuration);
+    public void startSwitcher(){
+        mHasRepeatedCount = 0;
+        if (checkNoAnimCondtions()){
+            stopSwitcher();
+            return;
         }
-    };
 
-    private Runnable mAnimDelayRunnable = new Runnable() {
-        @Override
-        public void run() {
-            mActionDownItemIndex = -1;
-            mAdapter.step();
-            mViewFactory.step();
-            if (mInterval > 0) {
-                showIntervalState();
-            }
-            if (mRepeatCount == INFINITE || mAdapter.getRepeatedCount() < mRepeatCount) {
-                postDelayed(mSwitchAnimRunnable, mInterval);
-            } else {
-                mIsRunning = false;
-            }
+        if (getChildCount() == 0){
+            addView(getAdapter().makeView(getContext()));
+            addView(getAdapter().makeView(getContext()));
         }
-    };
 
-    private Runnable mStartDelayRunnable = new Runnable() {
-        @Override
-        public void run() {
+        if (!mIsRunning) {
+            if (mSwitchStrategy != null) {
+                mSwitchStrategy.setSwitcher(this);
+                mSwitchStrategy.init();
+            }
             mIsRunning = true;
-            postDelayed(mSwitchAnimRunnable, mInterval);
-            if (mInterval > 0) {
-                showIntervalState();
-            }
-        }
-    };
-
-    public static abstract class AbsBaseAdapter<T extends AutoSwitchView.ViewHolder> {
-        private int mItemIndex;
-        private int mRepeatedCount;
-
-        public abstract T onCreateView(Context context);
-        public abstract void updateItem(T holder, int position);
-        public abstract int getItemCount();
-
-        private void step() {
-            mItemIndex = nextItemIndex();
-        }
-
-        private int nextItemIndex() {
-            int i = mItemIndex;
-            i++;
-            if (i >= getItemCount()){
-                i = 0;
-                mRepeatedCount++;
-            }
-            return i;
-        }
-
-        private void resetItemIndex(){
-            mItemIndex = 0;
-            mRepeatedCount = 0;
-        }
-
-        private int getItemIndex() {
-            return mItemIndex;
-        }
-
-        public int getRepeatedCount() {
-            return mRepeatedCount;
         }
     }
 
-    private class ChildViewFactory {
-        private ViewHolder[] mViewHolders = new ViewHolder[2];
-        private int mViewIndex;
-        private AbsBaseAdapter mAdapter;
-
-        public void setAdapter(AbsBaseAdapter adapter) {
-            mAdapter = adapter;
-        }
-
-        private View thisView() {
-            return getView(mViewIndex);
-        }
-
-        private View nextView() {
-            return getView(next(mViewIndex));
-        }
-
-        private View getView(int indext){
-            if (indext >= mViewHolders.length) {
-                return null;
-            } else if (mViewHolders[indext] == null) {
-                mViewHolders[indext] = mAdapter.onCreateView(getContext());
-            }
-            return mViewHolders[indext].getView();
-        }
-
-        private int next(int index) {
-            index++;
-            if (index >= mViewHolders.length){
-                index = 0;
-            }
-            return index;
-        }
-
-        private void step(){
-            mViewIndex = next(mViewIndex);
-        }
-
-        private void updateViews(View view, int index){
-            if (view.getTag() != null) {
-                ViewHolder holder = (ViewHolder) view.getTag();
-                if (holder.mItemIndex != index) {
-                    holder.mItemIndex = index;
-                    mAdapter.updateItem(holder, index);
-                }
-            }
+    public void stopSwitcher(){
+        mIsRunning = false;
+        if (mSwitchStrategy != null) {
+            mSwitchStrategy.stop();
         }
     }
 
-    public static class ViewHolder{
-        private View mView;
-        private int mItemIndex = -1;
-
-        public ViewHolder(View view) {
-            mView = view;
-            view.setTag(this);
+    @Override
+    public void stepOver() {
+        super.stepOver();
+        if (getWhichChild() == 0){
+            mHasRepeatedCount++;
         }
-
-        public View getView() {
-            return mView;
-        }
-
-        public Context getContext(){
-            return mView.getContext();
-        }
-    }
-
-    public interface OnItemClickListener{
-        void onItemClick(AutoSwitchView parent, View child, int position);
-    }
-
-    public interface SwitchAnimStrategy{
-        void beforeAnimOut(AutoSwitchView parent, View child);
-        ViewPropertyAnimator animOut(AutoSwitchView parent, View child, ViewPropertyAnimator animator);
-        void beforeAnimIn(AutoSwitchView parent, View child);
-        ViewPropertyAnimator animIn(AutoSwitchView parent, View child, ViewPropertyAnimator animator);
     }
 }

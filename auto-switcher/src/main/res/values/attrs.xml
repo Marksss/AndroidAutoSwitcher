@@ -3,7 +3,5 @@
     <declare-styleable name="AutoSwitchView">
         <attr name="switcher_autoStart" format="boolean" />
         <attr name="switcher_repeatCount" format="integer" />
-        <attr name="switcher_interval" format="integer" />
-        <attr name="switcher_animDuration" format="integer" />
     </declare-styleable>
 </resources>

@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:layout_gravity="center_horizontal"
-        app:switcher_interval="2000"
         app:switcher_autoStart="true"
         app:switcher_repeatCount="2"/>
 
@@ -22,7 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
-        app:switcher_animDuration="300"
         app:switcher_autoStart="true"/>
 
     <com.switcher.AutoSwitchView
@@ -31,8 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
-        app:switcher_interval="0"
-        app:switcher_animDuration="3000"
         app:switcher_autoStart="true"/>
 
     <com.switcher.AutoSwitchView
@@ -41,7 +37,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
-        app:switcher_animDuration="1000"
         app:switcher_autoStart="true"/>
 
     <com.switcher.AutoSwitchView
@@ -50,7 +45,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
-        app:switcher_animDuration="800"
         app:switcher_autoStart="true"/>
 
 </LinearLayout>
