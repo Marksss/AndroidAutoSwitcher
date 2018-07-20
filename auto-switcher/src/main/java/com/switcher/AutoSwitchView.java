@@ -115,8 +115,13 @@ public class AutoSwitchView extends BaseSwitchView {
 
         if (!mIsRunning) {
             if (mSwitchStrategy != null) {
-                mSwitchStrategy.setSwitcher(this);
-                mSwitchStrategy.init();
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwitchStrategy.setSwitcher(AutoSwitchView.this);
+                        mSwitchStrategy.init();
+                    }
+                });
             }
             mIsRunning = true;
         }

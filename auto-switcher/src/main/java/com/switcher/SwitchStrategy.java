@@ -47,7 +47,7 @@ public class SwitchStrategy {
     void stop(){
         mIsStopped = true;
         mHandler.removeCallbacksAndMessages(null);
-        if (mCancelStep != null) {
+        if (mCancelStep != null && mCancelMembers != null) {
             mCancelStep.operate(mSwitcher, this);
         }
     }

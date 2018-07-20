@@ -3,6 +3,7 @@ package com.example.app;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
@@ -42,15 +43,15 @@ public class MainActivity extends Activity {
 
         AutoSwitchView autoSwitchView2 = (AutoSwitchView) findViewById(R.id.auto_roll_2);
         autoSwitchView2.setAdapter(new MyAdapter(mEntityList));
-        autoSwitchView2.setSwitchStrategy(StrategyFactory.makeCarouselStrategy(3000, 300, StrategyFactory.Mode.top2Bottom, new LinearInterpolator()));
+        autoSwitchView2.setSwitchStrategy(StrategyFactory.makeCarouselStrategy(3000, 900, StrategyFactory.Mode.left2Right, new AccelerateDecelerateInterpolator()));
 
         AutoSwitchView autoSwitchView3 = (AutoSwitchView) findViewById(R.id.auto_roll_3);
         autoSwitchView3.setAdapter(new MyAdapter(mEntityList));
-        autoSwitchView3.setSwitchStrategy(StrategyFactory.makeCarouselStrategy(3000, 1000, StrategyFactory.Mode.left2Right, new DecelerateInterpolator(1.5f)));
+        autoSwitchView3.setSwitchStrategy(StrategyFactory.makeContinuousStrategy(500, StrategyFactory.Mode.top2Bottom));
 
         AutoSwitchView autoSwitchView4 = (AutoSwitchView) findViewById(R.id.auto_roll_4);
         autoSwitchView4.setAdapter(new MyAdapter(mEntityList));
-        autoSwitchView4.setSwitchStrategy(StrategyFactory.makeCarouselStrategy(3000, 1000, StrategyFactory.Mode.right2Left, new LinearInterpolator()));
+        autoSwitchView4.setSwitchStrategy(StrategyFactory.makeContinuousStrategy(2000, StrategyFactory.Mode.right2Left));
 
     }
 }
