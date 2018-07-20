@@ -132,7 +132,7 @@ public class AutoSwitchView extends BaseSwitchView {
     @Override
     public void stepOver() {
         super.stepOver();
-        if (getWhichChild() == 0){
+        if (getAdapter().getCurrentIndex() == 0){
             mHasRepeatedCount++;
         }
     }

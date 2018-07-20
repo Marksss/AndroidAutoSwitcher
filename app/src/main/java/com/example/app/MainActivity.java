@@ -38,21 +38,19 @@ public class MainActivity extends Activity {
 
         AutoSwitchView autoSwitchView1 = (AutoSwitchView) findViewById(R.id.auto_roll_1);
         autoSwitchView1.setAdapter(new MyAdapter(mEntityList));
-        autoSwitchView1.setSwitchStrategy(StrategyFactory.makeCarouselStrategy());
-//
-//        AutoSwitchView autoSwitchView2 = (AutoSwitchView) findViewById(R.id.auto_roll_2);
-//        autoSwitchView2.setAdapter(new MyAdapter(mEntityList));
-//        autoSwitchView2.setSwitchStrategy(StrategyFactory.makeCarouselStrategy());
+        autoSwitchView1.setSwitchStrategy(StrategyFactory.makeCarouselStrategy(3000, 300, StrategyFactory.Mode.bottom2Top, new OvershootInterpolator(0.8f)));
 
-//        AutoSwitchView autoSwitchView3 = (AutoSwitchView) findViewById(R.id.auto_roll_3);
-//        autoSwitchView3.setAdapter(new MyAdapter(mEntityList));
-//        autoSwitchView3.setAnimStrategy(new CarouselStrategy().
-//                setMode(CarouselStrategy.Mode.left2Right).
-//                setInterpolator(new DecelerateInterpolator(1.5f)));
-//
-//        AutoSwitchView autoSwitchView4 = (AutoSwitchView) findViewById(R.id.auto_roll_4);
-//        autoSwitchView4.setAdapter(new MyAdapter(mEntityList));
-//        autoSwitchView4.setAnimStrategy(new CarouselStrategy().setMode(CarouselStrategy.Mode.right2Left));
+        AutoSwitchView autoSwitchView2 = (AutoSwitchView) findViewById(R.id.auto_roll_2);
+        autoSwitchView2.setAdapter(new MyAdapter(mEntityList));
+        autoSwitchView2.setSwitchStrategy(StrategyFactory.makeCarouselStrategy(3000, 300, StrategyFactory.Mode.top2Bottom, new LinearInterpolator()));
+
+        AutoSwitchView autoSwitchView3 = (AutoSwitchView) findViewById(R.id.auto_roll_3);
+        autoSwitchView3.setAdapter(new MyAdapter(mEntityList));
+        autoSwitchView3.setSwitchStrategy(StrategyFactory.makeCarouselStrategy(3000, 1000, StrategyFactory.Mode.left2Right, new DecelerateInterpolator(1.5f)));
+
+        AutoSwitchView autoSwitchView4 = (AutoSwitchView) findViewById(R.id.auto_roll_4);
+        autoSwitchView4.setAdapter(new MyAdapter(mEntityList));
+        autoSwitchView4.setSwitchStrategy(StrategyFactory.makeCarouselStrategy(3000, 1000, StrategyFactory.Mode.right2Left, new LinearInterpolator()));
 
     }
 }

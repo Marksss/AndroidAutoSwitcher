@@ -1,6 +1,7 @@
 package com.switcher;
 
 import android.os.Handler;
+import android.os.Looper;
 
 /**
  * Created by shenxl on 2018/7/19.
@@ -10,7 +11,7 @@ public class SwitchStrategy {
     private boolean mIsStopped;
     private long mInterval;
     private AutoSwitchView mSwitcher;
-    private Handler mHandler = new Handler();
+    private Handler mHandler = new Handler(Looper.getMainLooper());
     private Object[] mCancelMembers;
 
     private SingleStep mInitStep, mNextStep, mCancelStep;
@@ -52,15 +53,16 @@ public class SwitchStrategy {
     }
 
     public void next(){
+        mSwitcher.stepOver();
+
         if (mIsStopped || mSwitcher.needStop()){
             return;
         }
 
-        mSwitcher.updateNextView();
+        mSwitcher.updateCurrentView();
         if (mNextStep != null) {
             mNextStep.operate(mSwitcher, this);
         }
-        mSwitcher.stepOver();
     }
 
     public void intervalAndNext(long delay){
@@ -74,7 +76,7 @@ public class SwitchStrategy {
         }, delay);
     }
 
-    public void cancelInNeeded(Object... ts){
+    public void cancelIfNeeded(Object... ts){
         mCancelMembers = ts;
     }
 

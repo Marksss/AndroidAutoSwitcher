@@ -112,14 +112,14 @@ public class BaseSwitchView extends FrameLayout {
     public void resetIndex(){
         mWhichChild = 0;
         if (mAdapter != null) {
-            mAdapter.mItemIndex = 0;
+            mAdapter.mWhichItem = 0;
         }
     }
 
     public void stepOver() {
         mWhichChild = getIndexInLoop(mWhichChild + 1, 0, getChildCount());
         if (mAdapter != null) {
-            mAdapter.mItemIndex = getIndexInLoop(mAdapter.mItemIndex + 1, 0, mAdapter.getItemCount());
+            mAdapter.mWhichItem = getIndexInLoop(mAdapter.mWhichItem + 1, 0, mAdapter.getItemCount());
         }
     }
 
@@ -160,18 +160,18 @@ public class BaseSwitchView extends FrameLayout {
     }
 
     public static abstract class AbsBaseAdapter {
-        private int mItemIndex;
+        private int mWhichItem;
 
         public abstract View makeView(Context context);
         public abstract void updateItem(View view, int position);
         public abstract int getItemCount();
 
-        private int getCurrentIndex() {
-            return mItemIndex;
+        public int getCurrentIndex() {
+            return mWhichItem;
         }
 
-        private int getNextIndex() {
-            return getIndexInLoop(mItemIndex + 1, 0, getItemCount());
+        public int getNextIndex() {
+            return getIndexInLoop(mWhichItem + 1, 0, getItemCount());
         }
     }
 
