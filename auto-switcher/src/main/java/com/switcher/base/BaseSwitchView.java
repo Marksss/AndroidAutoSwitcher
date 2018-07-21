@@ -13,8 +13,8 @@ import android.widget.FrameLayout;
 public class BaseSwitchView extends FrameLayout {
     public static final int INFINITE = -1;
 
-    private int mWhichChild = 0;
-    private AbsBaseAdapter mAdapter;
+    protected int mWhichChild = 0;
+    protected AbsBaseAdapter mAdapter;
     private OnItemClickListener mItemClickListener;
     private int mActionDownItemIndex = -1;
 
@@ -77,11 +77,7 @@ public class BaseSwitchView extends FrameLayout {
         return mWhichChild;
     }
 
-    public void showIntervalState() {
-        setDisplayedChild(mWhichChild);
-    }
-
-    public void setDisplayedChild(int childIndex) {
+    public void setDisplayedItem(int itemIndex) {
         final int count = getChildCount();
         final View currentView = getCurrentView();
         for (int i = 0; i < count; i++) {
@@ -91,7 +87,8 @@ public class BaseSwitchView extends FrameLayout {
             } else {
                 child.setVisibility(View.VISIBLE);
                 if (mAdapter != null) {
-                    updateView(child, mAdapter.getCurrentIndex());
+                    updateView(child, itemIndex);
+                    mAdapter.mWhichItem = itemIndex;
                 }
             }
         }
@@ -107,20 +104,6 @@ public class BaseSwitchView extends FrameLayout {
 
     public View getPreviousView(){
         return getChildAt(Utils.getIndexInLoop(mWhichChild - 1, 0, getChildCount()));
-    }
-
-    public void resetIndex(){
-        mWhichChild = 0;
-        if (mAdapter != null) {
-            mAdapter.mWhichItem = 0;
-        }
-    }
-
-    public void stepOver() {
-        mWhichChild = Utils.getIndexInLoop(mWhichChild + 1, 0, getChildCount());
-        if (mAdapter != null) {
-            mAdapter.mWhichItem = Utils.getIndexInLoop(mAdapter.mWhichItem + 1, 0, mAdapter.getItemCount());
-        }
     }
 
     private void updateView(View view, int index){
@@ -144,12 +127,6 @@ public class BaseSwitchView extends FrameLayout {
         }
     }
 
-    public void updateNextView(){
-        if (mAdapter != null) {
-            updateView(getNextView(), mAdapter.getNextIndex());
-        }
-    }
-
     public static abstract class AbsBaseAdapter {
         private int mWhichItem;
 
@@ -159,6 +136,10 @@ public class BaseSwitchView extends FrameLayout {
 
         public final int getCurrentIndex() {
             return mWhichItem;
+        }
+
+        public final void setCurrentItem(int whichItem) {
+            mWhichItem = whichItem;
         }
 
         public final int getNextIndex() {

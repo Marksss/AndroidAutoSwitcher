@@ -55,7 +55,10 @@ public class SwitchStrategy {
     public void next(){
         mSwitcher.stepOver();
 
-        if (mIsStopped || mSwitcher.needStop()){
+        if (mIsStopped){
+            return;
+        } else if (mSwitcher.needStop()){
+            mSwitcher.stopSwitcher();
             return;
         }
 

@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 
 import com.switcher.base.BaseSwitchView;
+import com.switcher.base.Utils;
 import com.switcher.builder.DefaultStrategyBuilder;
 
 /**
@@ -15,6 +16,7 @@ public class AutoSwitchView extends BaseSwitchView {
     public static final int INFINITE = -1;
 
     private SwitchStrategy mSwitchStrategy;
+    private SwitchListener mSwitchListener;
     private boolean mWasRunningWhenDetached;
     private boolean mIsRunning;
     private boolean mAutoStart;
@@ -42,7 +44,7 @@ public class AutoSwitchView extends BaseSwitchView {
     }
 
     private void init(AttributeSet attrs) {
-        if (attrs != null){
+        if (attrs != null) {
             TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.AutoSwitchView);
             if (ta.getBoolean(R.styleable.AutoSwitchView_switcher_autoStart, false)) {
                 mAutoStart = true;
@@ -78,8 +80,28 @@ public class AutoSwitchView extends BaseSwitchView {
         }
     }
 
+    @Override
+    public void setDisplayedItem(int itemIndex) {
+        if (mIsRunning) {
+            stopSwitcher();
+        }
+        super.setDisplayedItem(itemIndex);
+    }
+
     public void setSwitchStrategy(SwitchStrategy switchStrategy) {
         mSwitchStrategy = switchStrategy;
+    }
+
+    public SwitchStrategy getSwitchStrategy() {
+        return mSwitchStrategy;
+    }
+
+    public SwitchListener getSwitchListener() {
+        return mSwitchListener;
+    }
+
+    public void setSwitchListener(SwitchListener switchListener) {
+        mSwitchListener = switchListener;
     }
 
     public int getRepeatCount() {
@@ -90,28 +112,14 @@ public class AutoSwitchView extends BaseSwitchView {
         mRepeatCount = repeatCount;
     }
 
-    boolean needStop(){
-        return checkNoAnimCondtions() || (mRepeatCount != INFINITE && mHasRepeatedCount >= mRepeatCount) ;
-    }
-
-    private boolean checkNoAnimCondtions() {
-        if (getAdapter() == null || getAdapter().getItemCount() == 0){
-            return true;
-        } else if (getAdapter().getItemCount() == 1) {
-            showIntervalState();
-            return true;
-        }
-        return false;
-    }
-
-    public void startSwitcher(){
+    public void startSwitcher() {
         mHasRepeatedCount = 0;
-        if (checkNoAnimCondtions()){
+        if (checkNoAnimCondtions()) {
             stopSwitcher();
             return;
         }
 
-        if (getChildCount() == 0){
+        if (getChildCount() == 0) {
             addView(getAdapter().makeView(getContext()));
             addView(getAdapter().makeView(getContext()));
         }
@@ -121,6 +129,10 @@ public class AutoSwitchView extends BaseSwitchView {
                 post(new Runnable() {
                     @Override
                     public void run() {
+                        if (mSwitchListener != null) {
+                            mSwitchListener.switchStart(AutoSwitchView.this);
+                            mSwitchListener.indexChanged(AutoSwitchView.this, 0);
+                        }
                         mSwitchStrategy.setSwitcher(AutoSwitchView.this);
                         mSwitchStrategy.init();
                     }
@@ -130,18 +142,70 @@ public class AutoSwitchView extends BaseSwitchView {
         }
     }
 
-    public void stopSwitcher(){
+    public void stopSwitcher() {
         mIsRunning = false;
         if (mSwitchStrategy != null) {
             mSwitchStrategy.stop();
         }
+        resetIndex();
+        if (mAdapter != null) {
+            if (mAdapter.getItemCount() == 0) {
+                removeAllViews();
+            } else if (mAdapter.getItemCount() == 1){
+                showIntervalState();
+            }
+        }
+        if (mSwitchListener != null) {
+            mSwitchListener.switchEnd(this);
+        }
     }
 
-    @Override
-    public void stepOver() {
-        super.stepOver();
-        if (getAdapter().getCurrentIndex() == 0){
-            mHasRepeatedCount++;
+    boolean needStop() {
+        return checkNoAnimCondtions() || repeatOutOfLimit();
+    }
+
+    private boolean checkNoAnimCondtions() {
+        return getAdapter() == null || getAdapter().getItemCount() < 2;
+    }
+
+    private boolean repeatOutOfLimit(){
+        return mRepeatCount != INFINITE && mHasRepeatedCount >= mRepeatCount;
+    }
+
+    void showIntervalState() {
+        super.setDisplayedItem(mAdapter.getCurrentIndex());
+    }
+
+    void resetIndex() {
+        mWhichChild = 0;
+        if (mAdapter != null) {
+            mAdapter.setCurrentItem(0);
         }
+    }
+
+    void stepOver() {
+        mWhichChild = Utils.getIndexInLoop(mWhichChild + 1, 0, getChildCount());
+        if (mAdapter != null) {
+            mAdapter.setCurrentItem(Utils.getIndexInLoop(mAdapter.getCurrentIndex() + 1, 0, mAdapter.getItemCount()));
+            if (mAdapter.getCurrentIndex() == 0) {
+                mHasRepeatedCount++;
+                if (mSwitchListener != null && !repeatOutOfLimit()) {
+                    mSwitchListener.switchRepeat(this);
+                }
+            }
+            if (mSwitchListener != null && !repeatOutOfLimit()) {
+                mSwitchListener.indexChanged(this, mAdapter.getCurrentIndex());
+            }
+        }
+    }
+
+    public interface SwitchListener {
+        void switchStart(AutoSwitchView switcher);
+
+        void indexChanged(AutoSwitchView switcher, int index);
+
+        void switchRepeat(AutoSwitchView switcher);
+
+        void switchEnd(AutoSwitchView switcher);
     }
 }

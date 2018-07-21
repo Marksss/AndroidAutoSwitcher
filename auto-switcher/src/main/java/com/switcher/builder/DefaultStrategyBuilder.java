@@ -8,7 +8,7 @@ import com.switcher.SwitchStrategy;
  */
 
 public class DefaultStrategyBuilder {
-    private long mInterval;
+    private long mInterval = 3000;
 
     public DefaultStrategyBuilder setInterval(long interval) {
         mInterval = interval;
