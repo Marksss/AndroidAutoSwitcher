@@ -41,7 +41,7 @@ public class ContinuousStrategyBuilder {
                                 float value = (float) animation.getAnimatedValue();
                                 double floor = Math.floor(value);
                                 if (floor - 1 == switcher.getAdapter().getCurrentIndex()) {
-                                    strategy.next();
+                                    strategy.showNext();
                                 }
 
                                 float offset;

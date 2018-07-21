@@ -2,7 +2,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:gravity="center"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -10,6 +9,9 @@
         android:id="@+id/item_banner_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:drawablePadding="8dp"
+        android:drawableLeft="@drawable/horn"
         android:textSize="11sp"
         android:textColor="#666666"/>
 
@@ -17,9 +19,9 @@
         android:id="@+id/item_banner_stones"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/task_access_stone"
+        android:drawableLeft="@drawable/stone"
         android:drawablePadding="3dp"
-        android:layout_marginLeft="3dp"
+        android:layout_marginLeft="5dp"
         android:textSize="11sp"
         android:textColor="#666666"/>
 </LinearLayout>

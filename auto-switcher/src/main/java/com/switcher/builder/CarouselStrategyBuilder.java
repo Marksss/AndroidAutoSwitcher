@@ -42,7 +42,7 @@ public class CarouselStrategyBuilder {
                 init(new SwitchStrategy.SingleStep() {
                     @Override
                     public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
-                        strategy.intervalAndNext(mInterval);
+                        strategy.showNextAfterInterval(mInterval);
                     }
                 }).
                 next(new SwitchStrategy.SingleStep() {
@@ -96,7 +96,7 @@ public class CarouselStrategyBuilder {
                         viewIn.animate().withEndAction(new Runnable() {
                             @Override
                             public void run() {
-                                strategy.intervalAndNext(mInterval);
+                                strategy.showNextAfterInterval(mInterval);
                             }
                         });
                         strategy.cancelIfNeeded(viewOut.animate(), viewIn.animate());

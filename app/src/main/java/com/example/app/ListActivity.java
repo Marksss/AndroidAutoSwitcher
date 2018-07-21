@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.app.adapter.MyAdapterInList;
 import com.switcher.AutoSwitchView;
 import com.switcher.builder.CarouselStrategyBuilder;
 import com.switcher.builder.DirectionMode;
@@ -57,7 +59,7 @@ public class ListActivity extends Activity {
                 AutoSwitchView autoSwitchView = (AutoSwitchView) view.findViewById(R.id.auto_roll_in_list);
                 if (position % 3 == 0) {
                     autoSwitchView.setVisibility(View.VISIBLE);
-                    autoSwitchView.setAdapter(new MyAdapter(position));
+                    autoSwitchView.setAdapter(new MyAdapterInList(ListActivity.this, position));
                     autoSwitchView.setSwitchStrategy(
                             new CarouselStrategyBuilder().
                                     setAnimDuration(900).
@@ -75,27 +77,4 @@ public class ListActivity extends Activity {
         });
     }
 
-    public class MyAdapter extends AutoSwitchView.AbsBaseAdapter{
-        private int count;
-
-        public MyAdapter(int count) {
-            this.count = count;
-        }
-
-        @Override
-        public View makeView(Context context) {
-            return getLayoutInflater().inflate(R.layout.item_in_list, null);
-        }
-
-        @Override
-        public void updateItem(View view, int position) {
-            TextView textView = (TextView) view.findViewById(R.id.text_item_in_list);
-            textView.setText("i am rolling in a listview : "+position);
-        }
-
-        @Override
-        public int getItemCount() {
-            return count;
-        }
-    }
 }

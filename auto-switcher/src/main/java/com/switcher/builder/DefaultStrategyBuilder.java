@@ -20,13 +20,13 @@ public class DefaultStrategyBuilder {
                 init(new SwitchStrategy.SingleStep() {
                     @Override
                     public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
-                        strategy.intervalAndNext(mInterval);
+                        strategy.showNextAfterInterval(mInterval);
                     }
                 }).
                 next(new SwitchStrategy.SingleStep() {
                     @Override
                     public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
-                        strategy.intervalAndNext(mInterval);
+                        strategy.showNextAfterInterval(mInterval);
                     }
                 }).build();
     }

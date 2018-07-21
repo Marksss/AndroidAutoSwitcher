@@ -43,7 +43,7 @@ public class SwitchStrategy {
         }
     }
 
-    public void next(){
+    public void showNext(){
         mSwitcher.stepOver();
 
         if (mIsStopped){
@@ -59,13 +59,13 @@ public class SwitchStrategy {
         }
     }
 
-    public void intervalAndNext(long delay){
+    public void showNextAfterInterval(long delay){
         this.mInterval = delay;
         mSwitcher.showIntervalState();
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                next();
+                showNext();
             }
         }, delay);
     }

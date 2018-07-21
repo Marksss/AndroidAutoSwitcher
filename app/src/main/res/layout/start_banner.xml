@@ -13,8 +13,8 @@
         android:textSize="22sp"
         android:text="This is title"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginBottom="35dp"
+        android:layout_marginTop="40dp"/>
 
     <TextView
         android:id="@+id/banner_more"
