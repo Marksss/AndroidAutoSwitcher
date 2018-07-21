@@ -1,8 +1,9 @@
 package com.switcher.builder;
 
+import android.animation.AnimatorInflater;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.annotation.AnimRes;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.switcher.AutoSwitchView;
@@ -12,22 +13,22 @@ import com.switcher.SwitchStrategy;
  * Created by shenxl on 2018/7/21.
  */
 
-public class AnimationStrategyBuilder {
-    private Animation mAnimationIn;
-    private Animation mAnimationOut;
+public class AnimatorStrategyBuilder {
+    private ObjectAnimator mAnimatorIn;
+    private ObjectAnimator mAnimatorOut;
     private long mInterval = 3000;
 
-    public AnimationStrategyBuilder(Animation animationIn, Animation animationOut) {
-        mAnimationIn = animationIn;
-        mAnimationOut = animationOut;
+    public AnimatorStrategyBuilder(ObjectAnimator animatorIn, ObjectAnimator animatorOut) {
+        mAnimatorIn = animatorIn;
+        mAnimatorOut = animatorOut;
     }
 
-    public AnimationStrategyBuilder(Context context, @AnimRes int resourceIDIn, @AnimRes int resourceIDOut){
-        mAnimationIn = AnimationUtils.loadAnimation(context, resourceIDIn);
-        mAnimationOut = AnimationUtils.loadAnimation(context, resourceIDOut);
+    public AnimatorStrategyBuilder(Context context, int resourceIDIn, int resourceIDOut) {
+        mAnimatorIn = (ObjectAnimator) AnimatorInflater.loadAnimator(context, resourceIDIn);
+        mAnimatorOut = (ObjectAnimator) AnimatorInflater.loadAnimator(context, resourceIDOut);
     }
 
-    public AnimationStrategyBuilder setInterval(long interval) {
+    public AnimatorStrategyBuilder setInterval(long interval) {
         mInterval = interval;
         return this;
     }
@@ -43,11 +44,13 @@ public class AnimationStrategyBuilder {
                 next(new SwitchStrategy.SingleStep() {
                     @Override
                     public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
-                        if (mAnimationIn != null) {
-                            switcher.getCurrentView().startAnimation(mAnimationIn);
+                        if (mAnimatorIn != null) {
+                            mAnimatorIn.setTarget(switcher.getCurrentView());
+                            mAnimatorIn.start();
                         }
-                        if (mAnimationOut != null) {
-                            switcher.getPreviousView().startAnimation(mAnimationOut);
+                        if (mAnimatorOut != null) {
+                            mAnimatorOut.setTarget(switcher.getPreviousView());
+                            mAnimatorOut.start();
                         }
                         strategy.showNextAfterInterval(mInterval);
                     }
@@ -57,7 +60,7 @@ public class AnimationStrategyBuilder {
                     public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
                         if (strategy.getCancelMembers() != null) {
                             for (Object obj : strategy.getCancelMembers()) {
-                                ((Animation) obj).cancel();
+                                ((ObjectAnimator) obj).cancel();
                             }
                         }
                     }
