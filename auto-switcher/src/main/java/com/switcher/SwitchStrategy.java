@@ -29,18 +29,9 @@ public class SwitchStrategy {
     void init(){
         mIsStopped = false;
         mSwitcher.resetIndex();
-        mSwitcher.updateCurrentView();
+        mSwitcher.showIntervalState();
         if (mInitStep != null) {
             mInitStep.operate(mSwitcher, this);
-        }
-    }
-
-    void restart(){
-        mIsStopped = false;
-        if (mInterval > 0){
-            intervalAndNext(mInterval);
-        } else {
-            next();
         }
     }
 

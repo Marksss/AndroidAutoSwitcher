@@ -1,10 +1,13 @@
 package com.example.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.switcher.AutoSwitchView;
@@ -75,4 +78,41 @@ public class MainActivity extends Activity {
                         build()
         );
     }
+
+
+    public class MyAdapter extends AutoSwitchView.AbsBaseAdapter {
+        List<MyEntity> mEntityList;
+
+        public MyAdapter(List<MyEntity> entityList) {
+            mEntityList = entityList;
+        }
+
+        @Override
+        public View makeView(Context context) {
+            return LayoutInflater.from(context).inflate(R.layout.vertical_banner,null,false);
+        }
+
+        @Override
+        public void updateItem(View view, int position) {
+            MyEntity bean = mEntityList.get(position);
+            TextView title = (TextView) view.findViewById(R.id.item_banner_text);
+            TextView stones = (TextView) view.findViewById(R.id.item_banner_stones);
+            title.setText(bean.title);
+            stones.setText("X"+position);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mEntityList == null ? 0 : mEntityList.size();
+        }
+    }
+
+    public class MyEntity {
+        public String title;
+
+        public MyEntity(String title) {
+            this.title = title;
+        }
+    }
+
 }

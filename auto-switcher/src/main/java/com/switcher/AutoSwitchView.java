@@ -70,14 +70,17 @@ public class AutoSwitchView extends BaseSwitchView {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (mWasRunningWhenDetached) {
-            mIsRunning = true;
-            if (mSwitchStrategy != null) {
-                mSwitchStrategy.restart();
-            }
-        } else if (mAutoStart) {
+        if (mWasRunningWhenDetached || mAutoStart) {
             startSwitcher();
         }
+    }
+
+    @Override
+    public void setVisibility(int visibility) {
+        if (visibility != VISIBLE){
+            stopSwitcher();
+        }
+        super.setVisibility(visibility);
     }
 
     @Override
@@ -89,6 +92,10 @@ public class AutoSwitchView extends BaseSwitchView {
     }
 
     public void setSwitchStrategy(SwitchStrategy switchStrategy) {
+        if (mSwitchStrategy != null){
+            mSwitchStrategy.stop();
+            mIsRunning = false;
+        }
         mSwitchStrategy = switchStrategy;
     }
 
@@ -135,10 +142,10 @@ public class AutoSwitchView extends BaseSwitchView {
                         }
                         mSwitchStrategy.setSwitcher(AutoSwitchView.this);
                         mSwitchStrategy.init();
+                        mIsRunning = true;
                     }
                 });
             }
-            mIsRunning = true;
         }
     }
 
@@ -165,7 +172,7 @@ public class AutoSwitchView extends BaseSwitchView {
     }
 
     private boolean checkNoAnimCondtions() {
-        return getAdapter() == null || getAdapter().getItemCount() < 2;
+        return getAdapter() == null || getAdapter().getItemCount() < 2 || getVisibility() != VISIBLE;
     }
 
     private boolean repeatOutOfLimit(){

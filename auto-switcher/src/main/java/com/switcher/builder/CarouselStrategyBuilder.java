@@ -105,6 +105,10 @@ public class CarouselStrategyBuilder {
                 cancel(new SwitchStrategy.SingleStep() {
                     @Override
                     public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
+                        switcher.getCurrentView().setX(0);
+                        switcher.getCurrentView().setY(0);
+                        switcher.getPreviousView().setX(0);
+                        switcher.getPreviousView().setY(0);
                         if (strategy.getCancelMembers() != null) {
                             for (Object obj : strategy.getCancelMembers()) {
                                 ((ViewPropertyAnimator) obj).cancel();
