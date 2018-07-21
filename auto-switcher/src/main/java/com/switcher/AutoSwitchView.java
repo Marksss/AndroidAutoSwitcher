@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 
+import com.switcher.base.BaseSwitchView;
+import com.switcher.builder.DefaultStrategyBuilder;
+
 /**
  * Created by shenxl on 2018/7/11.
  */
@@ -49,7 +52,7 @@ public class AutoSwitchView extends BaseSwitchView {
             }
             ta.recycle();
         }
-        mSwitchStrategy = StrategyFactory.makeDefaultStrategy();
+        mSwitchStrategy = new DefaultStrategyBuilder().build();
     }
 
     @Override

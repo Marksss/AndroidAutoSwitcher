@@ -16,7 +16,7 @@ public class SwitchStrategy {
 
     private SingleStep mInitStep, mNextStep, mCancelStep;
 
-    private SwitchStrategy(Builder builder) {
+    private SwitchStrategy(BaseBuilder builder) {
         mInitStep = builder.mInitStep;
         mNextStep = builder.mNextStep;
         mCancelStep = builder.mCancelStep;
@@ -88,25 +88,25 @@ public class SwitchStrategy {
         void operate(AutoSwitchView switcher, SwitchStrategy strategy);
     }
 
-    public static final class Builder<T> {
+    public static final class BaseBuilder {
         private SingleStep mInitStep;
         private SingleStep mNextStep;
         private SingleStep mCancelStep;
 
-        public Builder() {
+        public BaseBuilder() {
         }
 
-        public Builder init(SingleStep val) {
+        public BaseBuilder init(SingleStep val) {
             mInitStep = val;
             return this;
         }
 
-        public Builder next(SingleStep val) {
+        public BaseBuilder next(SingleStep val) {
             mNextStep = val;
             return this;
         }
 
-        public Builder cancel(SingleStep val) {
+        public BaseBuilder cancel(SingleStep val) {
             mCancelStep = val;
             return this;
         }

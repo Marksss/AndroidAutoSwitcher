@@ -1,4 +1,4 @@
-package com.switcher;
+package com.switcher.base;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -98,15 +98,15 @@ public class BaseSwitchView extends FrameLayout {
     }
 
     public View getCurrentView(){
-        return getChildAt(getIndexInLoop(mWhichChild, 0, getChildCount()));
+        return getChildAt(Utils.getIndexInLoop(mWhichChild, 0, getChildCount()));
     }
 
     public View getNextView(){
-        return getChildAt(getIndexInLoop(mWhichChild + 1, 0, getChildCount()));
+        return getChildAt(Utils.getIndexInLoop(mWhichChild + 1, 0, getChildCount()));
     }
 
     public View getPreviousView(){
-        return getChildAt(getIndexInLoop(mWhichChild - 1, 0, getChildCount()));
+        return getChildAt(Utils.getIndexInLoop(mWhichChild - 1, 0, getChildCount()));
     }
 
     public void resetIndex(){
@@ -117,9 +117,9 @@ public class BaseSwitchView extends FrameLayout {
     }
 
     public void stepOver() {
-        mWhichChild = getIndexInLoop(mWhichChild + 1, 0, getChildCount());
+        mWhichChild = Utils.getIndexInLoop(mWhichChild + 1, 0, getChildCount());
         if (mAdapter != null) {
-            mAdapter.mWhichItem = getIndexInLoop(mAdapter.mWhichItem + 1, 0, mAdapter.getItemCount());
+            mAdapter.mWhichItem = Utils.getIndexInLoop(mAdapter.mWhichItem + 1, 0, mAdapter.getItemCount());
         }
     }
 
@@ -150,15 +150,6 @@ public class BaseSwitchView extends FrameLayout {
         }
     }
 
-    private static int getIndexInLoop(int index, int start, int total){
-        if (index >= start + total) {
-            return start;
-        } else if (index < start) {
-            return total + start - 1;
-        }
-        return index;
-    }
-
     public static abstract class AbsBaseAdapter {
         private int mWhichItem;
 
@@ -166,12 +157,12 @@ public class BaseSwitchView extends FrameLayout {
         public abstract void updateItem(View view, int position);
         public abstract int getItemCount();
 
-        public int getCurrentIndex() {
+        public final int getCurrentIndex() {
             return mWhichItem;
         }
 
-        public int getNextIndex() {
-            return getIndexInLoop(mWhichItem + 1, 0, getItemCount());
+        public final int getNextIndex() {
+            return Utils.getIndexInLoop(mWhichItem + 1, 0, getItemCount());
         }
     }
 

@@ -4,14 +4,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Toast;
 
 import com.switcher.AutoSwitchView;
-import com.switcher.BaseSwitchView;
-import com.switcher.StrategyFactory;
+import com.switcher.base.BaseSwitchView;
+import com.switcher.builder.CarouselStrategyBuilder;
+import com.switcher.builder.ContinuousStrategyBuilder;
+import com.switcher.builder.DirectionMode;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,9 +19,9 @@ import java.util.List;
 public class MainActivity extends Activity {
     List<MyEntity> mEntityList = Arrays.asList(
             new MyEntity("My Favourite Fruit is Apply"),
-                new MyEntity("My Mother's Favourite Fruit is Blueberry"),
-                new MyEntity("Anne's Favourite Fruit is Banana"),
-                new MyEntity("Jake Hates Fruit"));
+            new MyEntity("My Mother's Favourite Fruit is Blueberry"),
+            new MyEntity("Anne's Favourite Fruit is Banana"),
+            new MyEntity("Jake Hates Fruit"));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,25 +33,46 @@ public class MainActivity extends Activity {
         autoSwitchView.setOnItemClickListener(new BaseSwitchView.OnItemClickListener() {
             @Override
             public void onItemClick(BaseSwitchView parent, View child, int position) {
-                Toast.makeText(MainActivity.this, "position="+position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "position=" + position, Toast.LENGTH_SHORT).show();
             }
         });
 
         AutoSwitchView autoSwitchView1 = (AutoSwitchView) findViewById(R.id.auto_roll_1);
         autoSwitchView1.setAdapter(new MyAdapter(mEntityList));
-        autoSwitchView1.setSwitchStrategy(StrategyFactory.makeCarouselStrategy(3000, 300, StrategyFactory.Mode.bottom2Top, new OvershootInterpolator(0.8f)));
+        autoSwitchView1.setSwitchStrategy(
+                new CarouselStrategyBuilder().
+                        setAnimDuration(300).
+                        setInterpolator(new OvershootInterpolator(0.8f)).
+                        setMode(DirectionMode.bottom2Top).
+                        build()
+        );
 
         AutoSwitchView autoSwitchView2 = (AutoSwitchView) findViewById(R.id.auto_roll_2);
         autoSwitchView2.setAdapter(new MyAdapter(mEntityList));
-        autoSwitchView2.setSwitchStrategy(StrategyFactory.makeCarouselStrategy(3000, 900, StrategyFactory.Mode.left2Right, new AccelerateDecelerateInterpolator()));
+        autoSwitchView2.setSwitchStrategy(
+                new CarouselStrategyBuilder().
+                        setAnimDuration(900).
+                        setInterpolator(new AccelerateDecelerateInterpolator()).
+                        setMode(DirectionMode.left2Right).
+                        build()
+        );
 
         AutoSwitchView autoSwitchView3 = (AutoSwitchView) findViewById(R.id.auto_roll_3);
         autoSwitchView3.setAdapter(new MyAdapter(mEntityList));
-        autoSwitchView3.setSwitchStrategy(StrategyFactory.makeContinuousStrategy(500, StrategyFactory.Mode.top2Bottom));
+        autoSwitchView3.setSwitchStrategy(
+                new ContinuousStrategyBuilder().
+                        setDuration(500).
+                        setMode(DirectionMode.top2Bottom).
+                        build()
+        );
 
         AutoSwitchView autoSwitchView4 = (AutoSwitchView) findViewById(R.id.auto_roll_4);
         autoSwitchView4.setAdapter(new MyAdapter(mEntityList));
-        autoSwitchView4.setSwitchStrategy(StrategyFactory.makeContinuousStrategy(2000, StrategyFactory.Mode.right2Left));
-
+        autoSwitchView4.setSwitchStrategy(
+                new ContinuousStrategyBuilder().
+                        setDuration(2000).
+                        setMode(DirectionMode.right2Left).
+                        build()
+        );
     }
 }
