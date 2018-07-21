@@ -16,6 +16,7 @@ import com.example.app.adapter.HornAdapter;
 import com.example.app.adapter.PortraitAdapter;
 import com.switcher.AutoSwitchView;
 import com.switcher.base.BaseSwitchView;
+import com.switcher.builder.AnimationStrategyBuilder;
 import com.switcher.builder.CarouselStrategyBuilder;
 import com.switcher.builder.ContinuousStrategyBuilder;
 import com.switcher.builder.DirectionMode;
@@ -67,9 +68,7 @@ public class MainActivity extends Activity {
         AutoSwitchView autoSwitchView2 = (AutoSwitchView) findViewById(R.id.auto_roll_2);
         autoSwitchView2.setAdapter(new HornAdapter(mEntityList));
         autoSwitchView2.setSwitchStrategy(
-                new ContinuousStrategyBuilder().
-                        setDuration(500).
-                        setMode(DirectionMode.top2Bottom).
+                new AnimationStrategyBuilder(this, R.anim.anim_in, R.anim.anim_out).
                         build()
         );
 
