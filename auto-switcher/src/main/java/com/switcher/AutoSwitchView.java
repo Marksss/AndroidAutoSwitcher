@@ -62,7 +62,7 @@ public class AutoSwitchView extends BaseSwitchView {
         mWasRunningWhenDetached = mIsRunning;
         mIsRunning = false;
         if (mSwitchStrategy != null) {
-            mSwitchStrategy.stop();
+            mSwitchStrategy.onStop();
         }
         super.onDetachedFromWindow();
     }
@@ -93,7 +93,7 @@ public class AutoSwitchView extends BaseSwitchView {
 
     public void setSwitchStrategy(SwitchStrategy switchStrategy) {
         if (mSwitchStrategy != null){
-            mSwitchStrategy.stop();
+            mSwitchStrategy.onStop();
             mIsRunning = false;
         }
         mSwitchStrategy = switchStrategy;
@@ -152,7 +152,7 @@ public class AutoSwitchView extends BaseSwitchView {
     public void stopSwitcher() {
         mIsRunning = false;
         if (mSwitchStrategy != null) {
-            mSwitchStrategy.stop();
+            mSwitchStrategy.onStop();
         }
         resetIndex();
         if (mAdapter != null) {
@@ -176,7 +176,7 @@ public class AutoSwitchView extends BaseSwitchView {
     }
 
     private boolean repeatOutOfLimit(){
-        return mRepeatCount != INFINITE && mHasRepeatedCount >= mRepeatCount;
+        return mRepeatCount != INFINITE && mHasRepeatedCount > mRepeatCount;
     }
 
     void showIntervalState() {

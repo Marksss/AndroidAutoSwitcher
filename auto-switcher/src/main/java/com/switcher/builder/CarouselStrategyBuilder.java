@@ -6,6 +6,8 @@ import android.view.animation.Interpolator;
 
 import com.switcher.AutoSwitchView;
 import com.switcher.SwitchStrategy;
+import com.switcher.base.ChainOperator;
+import com.switcher.base.SingleOperator;
 
 /**
  * Created by shenxl on 2018/7/21.
@@ -39,15 +41,15 @@ public class CarouselStrategyBuilder {
 
     public SwitchStrategy build() {
         return new SwitchStrategy.BaseBuilder().
-                init(new SwitchStrategy.SingleStep() {
+                init(new SingleOperator() {
                     @Override
-                    public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
-                        strategy.showNextAfterInterval(mInterval);
+                    public void operate(AutoSwitchView switcher, ChainOperator operator) {
+                        operator.showNextWithInterval(mInterval);
                     }
                 }).
-                next(new SwitchStrategy.SingleStep() {
+                next(new SingleOperator() {
                     @Override
-                    public void operate(AutoSwitchView switcher, final SwitchStrategy strategy) {
+                    public void operate(AutoSwitchView switcher, final ChainOperator operator) {
                         View viewOut = switcher.getPreviousView();
                         switch (mMode) {
                             case top2Bottom:
@@ -96,21 +98,21 @@ public class CarouselStrategyBuilder {
                         viewIn.animate().withEndAction(new Runnable() {
                             @Override
                             public void run() {
-                                strategy.showNextAfterInterval(mInterval);
+                                operator.showNextWithInterval(mInterval);
                             }
                         });
-                        strategy.cancelIfNeeded(viewOut.animate(), viewIn.animate());
+                        operator.stopWhenNeeded(viewOut.animate(), viewIn.animate());
                     }
                 }).
-                cancel(new SwitchStrategy.SingleStep() {
+                withEnd(new SingleOperator() {
                     @Override
-                    public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
+                    public void operate(AutoSwitchView switcher, ChainOperator operator) {
                         switcher.getCurrentView().setX(0);
                         switcher.getCurrentView().setY(0);
                         switcher.getPreviousView().setX(0);
                         switcher.getPreviousView().setY(0);
-                        if (strategy.getCancelMembers() != null) {
-                            for (Object obj : strategy.getCancelMembers()) {
+                        if (operator.getStoppingMembers() != null) {
+                            for (Object obj : operator.getStoppingMembers()) {
                                 ((ViewPropertyAnimator) obj).cancel();
                             }
                         }

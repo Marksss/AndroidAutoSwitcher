@@ -3,23 +3,26 @@ package com.switcher;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.switcher.base.ChainOperator;
+import com.switcher.base.SingleOperator;
+
 /**
  * Created by shenxl on 2018/7/19.
  */
 
-public class SwitchStrategy {
+public class SwitchStrategy implements ChainOperator {
     private boolean mIsStopped;
     private long mInterval;
     private AutoSwitchView mSwitcher;
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private Object[] mCancelMembers;
 
-    private SingleStep mInitStep, mNextStep, mCancelStep;
+    private SingleOperator mInitStep, mNextStep, mStopStep;
 
     private SwitchStrategy(BaseBuilder builder) {
         mInitStep = builder.mInitStep;
         mNextStep = builder.mNextStep;
-        mCancelStep = builder.mCancelStep;
+        mStopStep = builder.mStopStep;
     }
 
     void setSwitcher(AutoSwitchView switcher) {
@@ -35,14 +38,16 @@ public class SwitchStrategy {
         }
     }
 
-    void stop(){
+    @Override
+    public void onStop(){
         mIsStopped = true;
         mHandler.removeCallbacksAndMessages(null);
-        if (mCancelStep != null && mCancelMembers != null) {
-            mCancelStep.operate(mSwitcher, this);
+        if (mStopStep != null && mCancelMembers != null) {
+            mStopStep.operate(mSwitcher, this);
         }
     }
 
+    @Override
     public void showNext(){
         mSwitcher.stepOver();
 
@@ -59,7 +64,8 @@ public class SwitchStrategy {
         }
     }
 
-    public void showNextAfterInterval(long delay){
+    @Override
+    public void showNextWithInterval(long delay){
         this.mInterval = delay;
         mSwitcher.showIntervalState();
         mHandler.postDelayed(new Runnable() {
@@ -70,38 +76,36 @@ public class SwitchStrategy {
         }, delay);
     }
 
-    public void cancelIfNeeded(Object... ts){
+    @Override
+    public void stopWhenNeeded(Object... ts){
         mCancelMembers = ts;
     }
 
-    public Object[] getCancelMembers() {
+    @Override
+    public Object[] getStoppingMembers() {
         return mCancelMembers;
     }
 
-    public interface SingleStep {
-        void operate(AutoSwitchView switcher, SwitchStrategy strategy);
-    }
-
     public static final class BaseBuilder {
-        private SingleStep mInitStep;
-        private SingleStep mNextStep;
-        private SingleStep mCancelStep;
+        private SingleOperator mInitStep;
+        private SingleOperator mNextStep;
+        private SingleOperator mStopStep;
 
         public BaseBuilder() {
         }
 
-        public BaseBuilder init(SingleStep val) {
+        public BaseBuilder init(SingleOperator val) {
             mInitStep = val;
             return this;
         }
 
-        public BaseBuilder next(SingleStep val) {
+        public BaseBuilder next(SingleOperator val) {
             mNextStep = val;
             return this;
         }
 
-        public BaseBuilder cancel(SingleStep val) {
-            mCancelStep = val;
+        public BaseBuilder withEnd(SingleOperator val) {
+            mStopStep = val;
             return this;
         }
 

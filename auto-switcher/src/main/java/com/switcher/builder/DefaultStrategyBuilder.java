@@ -2,6 +2,8 @@ package com.switcher.builder;
 
 import com.switcher.AutoSwitchView;
 import com.switcher.SwitchStrategy;
+import com.switcher.base.ChainOperator;
+import com.switcher.base.SingleOperator;
 
 /**
  * Created by shenxl on 2018/7/21.
@@ -17,16 +19,16 @@ public class DefaultStrategyBuilder {
 
     public SwitchStrategy build() {
         return new SwitchStrategy.BaseBuilder().
-                init(new SwitchStrategy.SingleStep() {
+                init(new SingleOperator() {
                     @Override
-                    public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
-                        strategy.showNextAfterInterval(mInterval);
+                    public void operate(AutoSwitchView switcher, ChainOperator operator) {
+                        operator.showNextWithInterval(mInterval);
                     }
                 }).
-                next(new SwitchStrategy.SingleStep() {
+                next(new SingleOperator() {
                     @Override
-                    public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
-                        strategy.showNextAfterInterval(mInterval);
+                    public void operate(AutoSwitchView switcher, ChainOperator operator) {
+                        operator.showNextWithInterval(mInterval);
                     }
                 }).build();
     }

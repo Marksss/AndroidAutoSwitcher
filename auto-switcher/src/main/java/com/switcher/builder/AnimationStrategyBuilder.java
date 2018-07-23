@@ -7,6 +7,8 @@ import android.view.animation.AnimationUtils;
 
 import com.switcher.AutoSwitchView;
 import com.switcher.SwitchStrategy;
+import com.switcher.base.ChainOperator;
+import com.switcher.base.SingleOperator;
 
 /**
  * Created by shenxl on 2018/7/21.
@@ -34,31 +36,32 @@ public class AnimationStrategyBuilder {
 
     public SwitchStrategy build() {
         return new SwitchStrategy.BaseBuilder().
-                init(new SwitchStrategy.SingleStep() {
+                init(new SingleOperator() {
                     @Override
-                    public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
-                        strategy.showNextAfterInterval(mInterval);
+                    public void operate(AutoSwitchView switcher, ChainOperator operator) {
+                        operator.showNextWithInterval(mInterval);
                     }
                 }).
-                next(new SwitchStrategy.SingleStep() {
+                next(new SingleOperator() {
                     @Override
-                    public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
+                    public void operate(AutoSwitchView switcher, ChainOperator operator) {
                         if (mAnimationIn != null) {
                             switcher.getCurrentView().startAnimation(mAnimationIn);
                         }
                         if (mAnimationOut != null) {
                             switcher.getPreviousView().startAnimation(mAnimationOut);
                         }
-                        strategy.showNextAfterInterval(mInterval);
+                        operator.showNextWithInterval(mInterval);
                     }
                 }).
-                cancel(new SwitchStrategy.SingleStep() {
+                withEnd(new SingleOperator() {
                     @Override
-                    public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
-                        if (strategy.getCancelMembers() != null) {
-                            for (Object obj : strategy.getCancelMembers()) {
-                                ((Animation) obj).cancel();
-                            }
+                    public void operate(AutoSwitchView switcher, ChainOperator operator) {
+                        if (mAnimationIn != null) {
+                            mAnimationIn.cancel();
+                        }
+                        if (mAnimationOut != null) {
+                            mAnimationOut.cancel();
                         }
                     }
                 }).build();

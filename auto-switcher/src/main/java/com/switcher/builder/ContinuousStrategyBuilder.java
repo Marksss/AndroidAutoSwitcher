@@ -5,6 +5,8 @@ import android.view.animation.LinearInterpolator;
 
 import com.switcher.AutoSwitchView;
 import com.switcher.SwitchStrategy;
+import com.switcher.base.ChainOperator;
+import com.switcher.base.SingleOperator;
 
 /**
  * Created by shenxl on 2018/7/21.
@@ -26,22 +28,22 @@ public class ContinuousStrategyBuilder {
 
     public SwitchStrategy build() {
         return new SwitchStrategy.BaseBuilder().
-                init(new SwitchStrategy.SingleStep() {
+                init(new SingleOperator() {
                     @Override
-                    public void operate(final AutoSwitchView switcher, final SwitchStrategy strategy) {
+                    public void operate(final AutoSwitchView switcher, final ChainOperator operator) {
                         final float end = switcher.getAdapter().getItemCount() + 1;
-                        ValueAnimator animator1 = ValueAnimator.ofFloat(0f, end);
-                        animator1.setDuration((long) (mDuration * end));
-                        animator1.setRepeatCount(switcher.getRepeatCount());
-                        animator1.setRepeatMode(ValueAnimator.RESTART);
-                        animator1.setInterpolator(new LinearInterpolator());
-                        animator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        ValueAnimator animator = ValueAnimator.ofFloat(0f, end);
+                        animator.setDuration((long) (mDuration * end));
+                        animator.setRepeatCount(switcher.getRepeatCount());
+                        animator.setRepeatMode(ValueAnimator.RESTART);
+                        animator.setInterpolator(new LinearInterpolator());
+                        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                             @Override
                             public void onAnimationUpdate(ValueAnimator animation) {
                                 float value = (float) animation.getAnimatedValue();
                                 double floor = Math.floor(value);
                                 if (floor - 1 == switcher.getAdapter().getCurrentIndex()) {
-                                    strategy.showNext();
+                                    operator.showNext();
                                 }
 
                                 float offset;
@@ -69,20 +71,20 @@ public class ContinuousStrategyBuilder {
                                 }
                             }
                         });
-                        animator1.start();
+                        animator.start();
 
-                        strategy.cancelIfNeeded(animator1);
+                        operator.stopWhenNeeded(animator);
                     }
                 }).
-                cancel(new SwitchStrategy.SingleStep() {
+                withEnd(new SingleOperator() {
                     @Override
-                    public void operate(AutoSwitchView switcher, SwitchStrategy strategy) {
+                    public void operate(AutoSwitchView switcher, ChainOperator operator) {
                         switcher.getCurrentView().setX(0);
                         switcher.getCurrentView().setY(0);
                         switcher.getPreviousView().setX(0);
                         switcher.getPreviousView().setY(0);
-                        if (strategy.getCancelMembers() != null) {
-                            for (Object obj : strategy.getCancelMembers()) {
+                        if (operator.getStoppingMembers() != null) {
+                            for (Object obj : operator.getStoppingMembers()) {
                                 ((ValueAnimator) obj).cancel();
                             }
                         }
