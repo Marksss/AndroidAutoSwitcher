@@ -9,6 +9,9 @@ import com.switcher.base.Utils;
 import com.switcher.builder.DefaultStrategyBuilder;
 
 /**
+ * AutoSwitchView will animate between two views and one is shown at a time.
+ * It can automatically switch between each child
+ *
  * Created by shenxl on 2018/7/11.
  */
 
@@ -77,6 +80,7 @@ public class AutoSwitchView extends BaseSwitchView {
 
     @Override
     public void setVisibility(int visibility) {
+        // Cancel animations or delays when it is hidden
         if (visibility != VISIBLE){
             stopSwitcher();
         }
@@ -85,12 +89,18 @@ public class AutoSwitchView extends BaseSwitchView {
 
     @Override
     public void setDisplayedItem(int itemIndex) {
+        // Cancel animations or delays when user choose one of items
         if (mIsRunning) {
             stopSwitcher();
         }
         super.setDisplayedItem(itemIndex);
     }
 
+    /**
+     * Customized animation strategy for switch between each child
+     *
+     * @param switchStrategy
+     */
     public void setSwitchStrategy(SwitchStrategy switchStrategy) {
         if (mSwitchStrategy != null){
             mSwitchStrategy.onStop();
@@ -115,10 +125,21 @@ public class AutoSwitchView extends BaseSwitchView {
         return mRepeatCount;
     }
 
+    /**
+     * Sets how many times the animation should be repeated.
+     * If the repeat count is 0, the animation is never repeated.
+     * The repeat count is INFINITE by default.
+     *
+     * @param repeatCount the number of times the animation should be repeated
+     * @attr ref android.R.styleable#switcher_repeatCount
+     */
     public void setRepeatCount(int repeatCount) {
         mRepeatCount = repeatCount;
     }
 
+    /**
+     * Start a timer to cycle through child views
+     */
     public void startSwitcher() {
         mHasRepeatedCount = 0;
         if (checkNoAnimCondtions()) {
@@ -138,7 +159,6 @@ public class AutoSwitchView extends BaseSwitchView {
                     public void run() {
                         if (mSwitchListener != null) {
                             mSwitchListener.switchStart(AutoSwitchView.this);
-                            mSwitchListener.indexChanged(AutoSwitchView.this, 0);
                         }
                         mSwitchStrategy.setSwitcher(AutoSwitchView.this);
                         mSwitchStrategy.init();
@@ -149,6 +169,9 @@ public class AutoSwitchView extends BaseSwitchView {
         }
     }
 
+    /**
+     * Cancel animations or delays
+     */
     public void stopSwitcher() {
         mIsRunning = false;
         if (mSwitchStrategy != null) {
@@ -180,6 +203,7 @@ public class AutoSwitchView extends BaseSwitchView {
     }
 
     void showIntervalState() {
+        //show one view for a moment (mInterval) betwwn two switching actions
         super.setDisplayedItem(mAdapter.getCurrentIndex());
     }
 
@@ -191,8 +215,10 @@ public class AutoSwitchView extends BaseSwitchView {
     }
 
     void stepOver() {
+        // index of view ++
         mWhichChild = Utils.getIndexInLoop(mWhichChild + 1, 0, getChildCount());
         if (mAdapter != null) {
+            // index of item ++
             mAdapter.setCurrentItem(Utils.getIndexInLoop(mAdapter.getCurrentIndex() + 1, 0, mAdapter.getItemCount()));
             if (mAdapter.getCurrentIndex() == 0) {
                 mHasRepeatedCount++;
@@ -200,16 +226,14 @@ public class AutoSwitchView extends BaseSwitchView {
                     mSwitchListener.switchRepeat(this);
                 }
             }
-            if (mSwitchListener != null && !repeatOutOfLimit()) {
-                mSwitchListener.indexChanged(this, mAdapter.getCurrentIndex());
-            }
         }
     }
 
+    /**
+     * The animation listener to be notified when the animation of switcher starts, ends or repeats.
+     */
     public interface SwitchListener {
         void switchStart(AutoSwitchView switcher);
-
-        void indexChanged(AutoSwitchView switcher, int index);
 
         void switchRepeat(AutoSwitchView switcher);
 

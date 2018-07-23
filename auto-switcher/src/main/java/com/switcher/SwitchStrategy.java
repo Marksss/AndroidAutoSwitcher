@@ -7,6 +7,10 @@ import com.switcher.base.ChainOperator;
 import com.switcher.base.SingleOperator;
 
 /**
+ * Simple {@link ViewAnimator} that will animate between two or more views
+ * that have been added to it.  Only one child is shown at a time.  If
+ * requested, can automatically flip between each child at a regular interval.
+ *
  * Created by shenxl on 2018/7/19.
  */
 
