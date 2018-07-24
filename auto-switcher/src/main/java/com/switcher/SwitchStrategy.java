@@ -2,6 +2,7 @@ package com.switcher;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 
 import com.switcher.base.ChainOperator;
 import com.switcher.base.SingleOperator;
@@ -62,6 +63,7 @@ public class SwitchStrategy implements ChainOperator {
             return;
         }
 
+        mSwitcher.getCurrentView().setVisibility(View.VISIBLE);
         mSwitcher.updateCurrentView();
         if (mNextStep != null) {
             mNextStep.operate(mSwitcher, this);

@@ -3,6 +3,8 @@ package com.switcher.builder;
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.os.Handler;
+import android.view.View;
 
 import com.switcher.AutoSwitchView;
 import com.switcher.SwitchStrategy;
@@ -17,6 +19,7 @@ public class AnimatorStrategyBuilder {
     private ObjectAnimator mAnimatorIn;
     private ObjectAnimator mAnimatorOut;
     private long mInterval = 3000;
+    private Handler mHandler = new Handler();
 
     public AnimatorStrategyBuilder(ObjectAnimator animatorIn, ObjectAnimator animatorOut) {
         mAnimatorIn = animatorIn;
@@ -43,16 +46,24 @@ public class AnimatorStrategyBuilder {
                 }).
                 next(new SingleOperator() {
                     @Override
-                    public void operate(AutoSwitchView switcher, ChainOperator operator) {
+                    public void operate(AutoSwitchView switcher, final ChainOperator operator) {
+                        long delay = 0;
                         if (mAnimatorIn != null) {
                             mAnimatorIn.setTarget(switcher.getCurrentView());
                             mAnimatorIn.start();
+                            delay = mAnimatorIn.getDuration();
                         }
                         if (mAnimatorOut != null) {
                             mAnimatorOut.setTarget(switcher.getPreviousView());
                             mAnimatorOut.start();
+                            delay = delay > mAnimatorOut.getDuration() ? delay : mAnimatorOut.getDuration();
                         }
-                        operator.showNextWithInterval(mInterval);
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                operator.showNextWithInterval(mInterval);
+                            }
+                        }, delay);
                     }
                 }).
                 withEnd(new SingleOperator() {
@@ -64,6 +75,7 @@ public class AnimatorStrategyBuilder {
                         if (mAnimatorOut != null) {
                             mAnimatorOut.cancel();
                         }
+                        mHandler.removeCallbacksAndMessages(null);
                     }
                 }).build();
     }

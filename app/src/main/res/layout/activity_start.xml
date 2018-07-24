@@ -7,16 +7,11 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
-    <TextView
+    <Button
+        android:id="@+id/btn_start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="This is my first AutoSwitcher:"/>
-
-    <com.switcher.AutoSwitchView
-        android:id="@+id/auto_roll_start"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:switcher_autoStart="true"/>
+        android:layout_margin="20dp"
+        android:text="See more examples"/>
 
 </LinearLayout>

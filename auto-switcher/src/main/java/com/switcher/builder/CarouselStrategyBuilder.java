@@ -71,7 +71,6 @@ public class CarouselStrategyBuilder {
                         }
 
                         View viewIn = switcher.getCurrentView();
-                        viewIn.setVisibility(View.VISIBLE);
                         switch (mMode) {
                             case top2Bottom:
                                 viewIn.setY(-switcher.getMeasuredHeight());

@@ -75,12 +75,9 @@ public class MainActivity extends Activity {
         );
 
         AutoSwitchView autoSwitchView3 = (AutoSwitchView) findViewById(R.id.auto_roll_3);
-        autoSwitchView3.setAdapter(new PortraitAdapter());
+        autoSwitchView3.setAdapter(new SingleTextAdapter("I am Animator"));
         autoSwitchView3.setSwitchStrategy(
-                new CarouselStrategyBuilder().
-                        setAnimDuration(900).
-                        setInterpolator(new OvershootInterpolator(0.8f)).
-                        setMode(DirectionMode.left2Right).
+                new AnimatorStrategyBuilder(this, R.animator.anim_in, R.animator.anim_out).
                         build()
         );
 
@@ -89,7 +86,7 @@ public class MainActivity extends Activity {
         autoSwitchView4.setSwitchStrategy(
                 new ContinuousStrategyBuilder().
                         setDuration(2000).
-                        setMode(DirectionMode.right2Left).
+                        setMode(DirectionMode.left2Right).
                         build()
         );
     }
