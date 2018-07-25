@@ -51,11 +51,13 @@ public class SwitchStrategy implements ChainOperator {
 
     @Override
     public void onStop(){
-        mIsStopped = true;
-        mHandler.removeCallbacksAndMessages(null);
-        if (mStopStep != null && mCancelMembers != null) {
-            mStopStep.operate(mSwitcher, this);
+        if (!mIsStopped) {
+            mHandler.removeCallbacksAndMessages(null);
+            if (mStopStep != null && mCancelMembers != null) {
+                mStopStep.operate(mSwitcher, this);
+            }
         }
+        mIsStopped = true;
     }
 
     @Override
