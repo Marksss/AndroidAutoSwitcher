@@ -1,6 +1,7 @@
 package com.switcher.builder;
 
 import android.animation.ValueAnimator;
+import android.view.View;
 import android.view.animation.LinearInterpolator;
 
 import com.switcher.AutoSwitchView;
@@ -9,6 +10,8 @@ import com.switcher.base.ChainOperator;
 import com.switcher.base.SingleOperator;
 
 /**
+ * A strategy that is able to switch between items smoothly without any pauses
+ *
  * Created by shenxl on 2018/7/21.
  */
 
@@ -79,10 +82,8 @@ public class ContinuousStrategyBuilder {
                 withEnd(new SingleOperator() {
                     @Override
                     public void operate(AutoSwitchView switcher, ChainOperator operator) {
-                        switcher.getCurrentView().setX(0);
-                        switcher.getCurrentView().setY(0);
-                        switcher.getPreviousView().setX(0);
-                        switcher.getPreviousView().setY(0);
+                        switcher.getCurrentView().setVisibility(View.GONE);
+                        switcher.getPreviousView().setVisibility(View.GONE);
                         if (operator.getStoppingMembers() != null) {
                             for (Object obj : operator.getStoppingMembers()) {
                                 ((ValueAnimator) obj).cancel();

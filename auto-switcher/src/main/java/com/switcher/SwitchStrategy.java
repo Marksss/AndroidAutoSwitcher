@@ -8,9 +8,15 @@ import com.switcher.base.ChainOperator;
 import com.switcher.base.SingleOperator;
 
 /**
- * Simple {@link ViewAnimator} that will animate between two or more views
- * that have been added to it.  Only one child is shown at a time.  If
- * requested, can automatically flip between each child at a regular interval.
+ * A strategy that leads switcher {@link AutoSwitchView} to get all switching
+ * movement or animations done. It is a powerful tool that can be easliy
+ * customized through adding SingleOperator into {@link BaseBuilder}
+ * (init->next->withend) in turn to control all movements of {@link AutoSwitchView}.
+ *
+ * And some strategies are offered in the package builder, such as
+ * CarouselStrategyBuilder, AnimationStrategyBuilder, AnimatorStrategyBuilder
+ * and so on. The DefaultStrategyBuilder is used in {@link AutoSwitchView}
+ * by default.
  *
  * Created by shenxl on 2018/7/19.
  */
@@ -64,6 +70,7 @@ public class SwitchStrategy implements ChainOperator {
         }
 
         mSwitcher.getCurrentView().setVisibility(View.VISIBLE);
+        mSwitcher.getPreviousView().setVisibility(View.VISIBLE);
         mSwitcher.updateCurrentView();
         if (mNextStep != null) {
             mNextStep.operate(mSwitcher, this);
@@ -100,16 +107,34 @@ public class SwitchStrategy implements ChainOperator {
         public BaseBuilder() {
         }
 
+        /**
+         * @param val The access to all the movements or animations in
+         *            AutoSwitchView. if not called, nothing will happen.
+         * @return
+         */
         public BaseBuilder init(SingleOperator val) {
             mInitStep = val;
             return this;
         }
 
+        /**
+         * @param val Automatically invoked after showNext or showNextWithInterval
+         *            in {@link ChainOperator} is called
+         * @return
+         */
         public BaseBuilder next(SingleOperator val) {
             mNextStep = val;
             return this;
         }
 
+        /**
+         * Strongly recommend calling it to cancel animations or delay in case menory
+         * leaks or anything unusual happens
+         *
+         * @param val Automatically invoked when the switching movements is stopped
+         *            or {@link AutoSwitchView} is detached from window.
+         * @return
+         */
         public BaseBuilder withEnd(SingleOperator val) {
             mStopStep = val;
             return this;

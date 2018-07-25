@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 /**
+ * Base class for a {@link FrameLayout} container that can switch between views.
+ *
  * Created by shenxl on 2018/7/19.
  */
 
@@ -73,10 +75,19 @@ public class BaseSwitchView extends FrameLayout {
         return mAdapter;
     }
 
+    /**
+     * @return Returns the index of the currently displayed child view.
+     */
     public int getWhichChild() {
         return mWhichChild;
     }
 
+    /**
+     * Displays the data at the specified position on the current view and
+     * other views will be hidden
+     *
+     * @param itemIndex
+     */
     public void setDisplayedItem(int itemIndex) {
         final int count = getChildCount();
         final View currentView = getCurrentView();
@@ -121,17 +132,41 @@ public class BaseSwitchView extends FrameLayout {
         }
     }
 
+    /**
+     * Displays the data at the current position on the current view
+     */
     public void updateCurrentView(){
         if (mAdapter != null) {
             updateView(getCurrentView(), mAdapter.getCurrentIndex());
         }
     }
 
+    /**
+     * An Adapter object acts as a bridge between child views in {@link BaseSwitchView}
+     * and the underlying data for that view.
+     */
     public static abstract class AbsBaseAdapter {
         private int mWhichItem;
 
+        /**
+         * Create view that can be reused between items
+         *
+         * @param context
+         * @return
+         */
         public abstract View makeView(Context context);
+
+        /**
+         * Displays the data at the specified position on a specified view
+         *
+         * @param view
+         * @param position
+         */
         public abstract void updateItem(View view, int position);
+
+        /**
+         * @return How many items are in the data set represented by this Adapter.
+         */
         public abstract int getItemCount();
 
         public final int getCurrentIndex() {
@@ -147,6 +182,10 @@ public class BaseSwitchView extends FrameLayout {
         }
     }
 
+    /**
+     * Interface definition for a callback to be invoked when an item in this
+     * View has been clicked.
+     */
     public interface OnItemClickListener{
         void onItemClick(BaseSwitchView parent, View child, int position);
     }

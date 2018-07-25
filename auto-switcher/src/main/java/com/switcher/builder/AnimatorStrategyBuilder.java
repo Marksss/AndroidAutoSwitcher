@@ -12,6 +12,8 @@ import com.switcher.base.ChainOperator;
 import com.switcher.base.SingleOperator;
 
 /**
+ * Simple strategy to customize your own animation with {@link ObjectAnimator}
+ *
  * Created by shenxl on 2018/7/21.
  */
 

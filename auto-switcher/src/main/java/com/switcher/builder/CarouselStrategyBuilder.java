@@ -10,6 +10,8 @@ import com.switcher.base.ChainOperator;
 import com.switcher.base.SingleOperator;
 
 /**
+ *  A strategy that is able to switch between two items in different directions
+ *
  * Created by shenxl on 2018/7/21.
  */
 

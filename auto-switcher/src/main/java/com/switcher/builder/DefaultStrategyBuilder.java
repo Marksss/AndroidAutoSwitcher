@@ -6,6 +6,9 @@ import com.switcher.base.ChainOperator;
 import com.switcher.base.SingleOperator;
 
 /**
+ * The strategy, that is used in {@link AutoSwitchView} by default, only
+ * supports switching between items without any animations
+ *
  * Created by shenxl on 2018/7/21.
  */
 

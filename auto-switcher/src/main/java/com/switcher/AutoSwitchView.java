@@ -12,6 +12,9 @@ import com.switcher.builder.DefaultStrategyBuilder;
  * AutoSwitchView will animate between two views and one is shown at a time.
  * It can automatically switch between each child
  *
+ * @attr ref android.R.styleable#AutoSwitchView_switcher_autoStart
+ * @attr ref android.R.styleable#AutoSwitchView_switcher_repeatCount
+ *
  * Created by shenxl on 2018/7/11.
  */
 
@@ -24,7 +27,7 @@ public class AutoSwitchView extends BaseSwitchView {
     private boolean mIsRunning;
     private boolean mAutoStart;
     private int mHasRepeatedCount;
-    private int mRepeatCount = INFINITE;
+    private int mRepeatCount;
 
     public AutoSwitchView(Context context) {
         super(context);
@@ -97,6 +100,15 @@ public class AutoSwitchView extends BaseSwitchView {
     }
 
     /**
+     * @return
+     *
+     * @see #setSwitchStrategy(SwitchStrategy)
+     */
+    public SwitchStrategy getSwitchStrategy() {
+        return mSwitchStrategy;
+    }
+
+    /**
      * Customized animation strategy for switch between each child
      *
      * @param switchStrategy
@@ -109,18 +121,29 @@ public class AutoSwitchView extends BaseSwitchView {
         mSwitchStrategy = switchStrategy;
     }
 
-    public SwitchStrategy getSwitchStrategy() {
-        return mSwitchStrategy;
-    }
-
+    /**
+     * @return
+     *
+     * @see #setSwitchListener(SwitchListener)
+     */
     public SwitchListener getSwitchListener() {
         return mSwitchListener;
     }
 
+    /**
+     * Sets a listener to notify the life of animation(that starts, ends or repeats)
+     *
+     * @param switchListener
+     */
     public void setSwitchListener(SwitchListener switchListener) {
         mSwitchListener = switchListener;
     }
 
+    /**
+     * @return
+     *
+     * @see #setRepeatCount(int)
+     */
     public int getRepeatCount() {
         return mRepeatCount;
     }
@@ -128,13 +151,35 @@ public class AutoSwitchView extends BaseSwitchView {
     /**
      * Sets how many times the animation should be repeated.
      * If the repeat count is 0, the animation is never repeated.
-     * The repeat count is INFINITE by default.
+     * The repeat count is 0 by default.
      *
      * @param repeatCount the number of times the animation should be repeated
-     * @attr ref android.R.styleable#switcher_repeatCount
+     *
+     * @attr ref android.R.styleable#AutoSwitchView_switcher_repeatCount
      */
     public void setRepeatCount(int repeatCount) {
         mRepeatCount = repeatCount;
+    }
+
+    /**
+     * @return
+     *
+     * @see #setAutoStart(boolean)
+     */
+    public boolean isAutoStart() {
+        return mAutoStart;
+    }
+
+    /**
+     * Set if this view automatically calls {@link #startSwitcher()} when it
+     * becomes attached to a window.
+     *
+     * @param autoStart
+     *
+     * @attr ref android.R.styleable#AutoSwitchView_switcher_autoStart
+     */
+    public void setAutoStart(boolean autoStart) {
+        mAutoStart = autoStart;
     }
 
     /**
@@ -170,7 +215,7 @@ public class AutoSwitchView extends BaseSwitchView {
     }
 
     /**
-     * Cancel animations or delays
+     * Cancel animations or delay
      */
     public void stopSwitcher() {
         mIsRunning = false;
@@ -230,7 +275,8 @@ public class AutoSwitchView extends BaseSwitchView {
     }
 
     /**
-     * The animation listener to be notified when the animation of switcher starts, ends or repeats.
+     * The animation listener to be notified when the animation of switcher starts,
+     * ends or repeats.
      */
     public interface SwitchListener {
         void switchStart(AutoSwitchView switcher);
