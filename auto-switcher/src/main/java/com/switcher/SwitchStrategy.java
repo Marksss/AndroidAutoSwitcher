@@ -11,7 +11,7 @@ import com.switcher.base.SingleOperator;
  * A strategy that leads switcher {@link AutoSwitchView} to get all switching
  * movement or animations done. It is a powerful tool that can be easliy
  * customized through adding SingleOperator into {@link BaseBuilder}
- * (init->next->withend) in turn to control all movements of {@link AutoSwitchView}.
+ * (init-next-withend) in turn to control all movements of {@link AutoSwitchView}.
  *
  * And some strategies are offered in the package builder, such as
  * CarouselStrategyBuilder, AnimationStrategyBuilder, AnimatorStrategyBuilder

@@ -1,7 +1,6 @@
 package com.switcher.builder;
 
 import android.content.Context;
-import android.support.annotation.AnimRes;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
@@ -26,7 +25,7 @@ public class AnimationStrategyBuilder {
         mAnimationOut = animationOut;
     }
 
-    public AnimationStrategyBuilder(Context context, @AnimRes int resourceIDIn, @AnimRes int resourceIDOut){
+    public AnimationStrategyBuilder(Context context, int resourceIDIn, int resourceIDOut){
         mAnimationIn = AnimationUtils.loadAnimation(context, resourceIDIn);
         mAnimationOut = AnimationUtils.loadAnimation(context, resourceIDOut);
     }

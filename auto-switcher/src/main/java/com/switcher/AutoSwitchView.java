@@ -12,9 +12,6 @@ import com.switcher.builder.DefaultStrategyBuilder;
  * AutoSwitchView will animate between two views and one is shown at a time.
  * It can automatically switch between each child
  *
- * @attr ref android.R.styleable#AutoSwitchView_switcher_autoStart
- * @attr ref android.R.styleable#AutoSwitchView_switcher_repeatCount
- *
  * Created by shenxl on 2018/7/11.
  */
 
@@ -154,8 +151,6 @@ public class AutoSwitchView extends BaseSwitchView {
      * The repeat count is 0 by default.
      *
      * @param repeatCount the number of times the animation should be repeated
-     *
-     * @attr ref android.R.styleable#AutoSwitchView_switcher_repeatCount
      */
     public void setRepeatCount(int repeatCount) {
         mRepeatCount = repeatCount;
@@ -175,8 +170,6 @@ public class AutoSwitchView extends BaseSwitchView {
      * becomes attached to a window.
      *
      * @param autoStart
-     *
-     * @attr ref android.R.styleable#AutoSwitchView_switcher_autoStart
      */
     public void setAutoStart(boolean autoStart) {
         mAutoStart = autoStart;
