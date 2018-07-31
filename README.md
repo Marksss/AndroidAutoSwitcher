@@ -18,13 +18,7 @@ If you want the switching animation to be infinite, you just need to set switche
 ```
 AutoSwitchView as = (AutoSwitchView) findViewById(R.id.yourid);
 as.setAdapter(new YourAdapter());
-as.setSwitchStrategy(
-       new CarouselStrategyBuilder().
-            setAnimDuration(500).
-            setInterpolator(new DecelerateInterpolator()).
-            setMode(DirectionMode.bottom2Top).
-            build()
-        );
+as.setSwitchStrategy(new YourStrategy()); // See Switching Strategy
 as.startSwitcher(); // If you have set autoStart true, this is not needed.
 ```
 ### Switching Strategy
@@ -38,6 +32,24 @@ You can easily customize swtiching animations you like through SwitchStrategy. I
  switch between two items in different directions;
  - ContinuousStrategyBuilder: 
  switch between items smoothly without any pauses;
+ 
+ An example:
+ ```
+ as.setSwitchStrategy(
+      new AnimationStrategyBuilder(this, R.anim.anim_in, R.anim.anim_out).
+          build()
+);
+ ```
+ Another example:
+ ```
+ as.setSwitchStrategy(
+      new CarouselStrategyBuilder().
+          setAnimDuration(900).
+          setInterpolator(new AccelerateDecelerateInterpolator()).
+          setMode(DirectionMode.right2Left).
+          build()
+);
+ ```
 
 In most cases, strategies above are enough. If you want to customize animation that is not so complicated, you can use AnimationStrategyBuilde or AnimatorStrategyBuilder with your own Animation or ObjectAnimator.
 
