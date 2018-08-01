@@ -59,7 +59,7 @@ as.startSwitcher(); // If you have set autoStart true, this is not needed.
  ```
 
 在大多数情况下，以上的切换动画策略已经足够。如果想定制不那么复杂的动画, 也可以将自己的Animation或者ObjectAnimator添加到AnimationStrategyBuilde或者AnimatorStrategyBuilder中产生对应的切换策略。
-###复杂定制（非必需）
+### 复杂定制（非必需）
 如果想定制更加复杂的切换动画, 你可以轮流添加SingleOperator到BaseBuilder中，创建你自己的SwitchStrategy，这样就可以完全控制切换流程了（如下所示）。
 ```
 new SwitchStrategy.BaseBuilder().
