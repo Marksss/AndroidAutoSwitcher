@@ -1,6 +1,10 @@
 English  |  [中文文档](README_cn.md)
 
 # AndroidAutoSwitcher
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
+[![API](https://img.shields.io/badge/API-12%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=12)
+[![Version](https://img.shields.io/badge/Version-1.0.0-yellow.svg)](https://bintray.com/markshawn/com.github.markshawn/auto-switcher)
 
 AutoSwitchView is a view that can automatically switch between two children (items). Compared to ViewFlipper, it has better stability for reusing its children when working on large data sets. Compared to AdapterViewFlipper, its expansibility is more excellent.
 
@@ -25,7 +29,7 @@ as.setSwitchStrategy(new YourStrategy()); // See Switching Strategy
 as.startSwitcher(); // If you have set autoStart true, this is not needed.
 ```
 ### Switching Strategy
-You can easily customize swtiching animations you like through SwitchStrategy. It supports both Animation and ObjectAnimator. Here are some builders of SwitchStrategy I have offered as follows.
+You can easily customize swtiching animations you like with SwitchStrategy. It supports both Animation and ObjectAnimator. Here are some builders of SwitchStrategy I have offered as follows.
 
  - AnimationStrategyBuilde:
  customize your own animation with Animation;
@@ -55,11 +59,8 @@ You can easily customize swtiching animations you like through SwitchStrategy. I
  ```
 
 In most cases, strategies above are enough. If you want to customize animation that is not so complicated, you can use AnimationStrategyBuilde or AnimatorStrategyBuilder with your own Animation or ObjectAnimator.
-
-------
-
-(Here is optional)
-But if you want to customize complicated animation, then you can create your own SwitchStrategy through adding SingleOperator into BaseBuilder (init->next->withend) in turn to control all movements of the switcher.
+### Additional
+It usually is unnecessary. But if you want to customize more complicated animations, then you neeed to create your own SwitchStrategy through adding SingleOperator into BaseBuilder (init->next->withEnd) in turn to control all movements of the switcher.
 ```
 new SwitchStrategy.BaseBuilder().
     init(new SingleOperator() {

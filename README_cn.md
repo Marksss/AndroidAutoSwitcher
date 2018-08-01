@@ -1,6 +1,11 @@
 [English](README.md)  |  中文文档
 
 # AndroidAutoSwitcher
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
+[![API](https://img.shields.io/badge/API-12%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=12)
+[![Version](https://img.shields.io/badge/Version-1.0.0-yellow.svg)](https://bintray.com/markshawn/com.github.markshawn/auto-switcher)
+
 AutoSwitchView是一个能自由切换两个子控件的控件容器，相比于ViewFlipper，它支持子控件的复用，数据量大的情况下能有更好的性能。同时，相比于AdapterViewFlipper，它有更好的扩展性，支持自定义各种切换动画。 
 
 ![demo-gif](https://github.com/Marksss/AndroidAutoSwitcher/blob/master/gif/demo.gif)
@@ -54,10 +59,7 @@ as.startSwitcher(); // If you have set autoStart true, this is not needed.
  ```
 
 在大多数情况下，以上的切换动画策略已经足够。如果想定制不那么复杂的动画, 也可以将自己的Animation或者ObjectAnimator添加到AnimationStrategyBuilde或者AnimatorStrategyBuilder中产生对应的切换策略。
-
-------
-
-(分割线以下选看)
+###复杂定制（非必需）
 如果想定制更加复杂的切换动画, 你可以轮流添加SingleOperator到BaseBuilder中，创建你自己的SwitchStrategy，这样就可以完全控制切换流程了（如下所示）。
 ```
 new SwitchStrategy.BaseBuilder().
