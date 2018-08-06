@@ -180,14 +180,15 @@ public class AutoSwitchView extends BaseSwitchView {
      */
     public void startSwitcher() {
         mHasRepeatedCount = 0;
-        if (checkNoAnimCondtions()) {
-            stopSwitcher();
-            return;
-        }
 
         if (getChildCount() == 0) {
             addView(getAdapter().makeView(getContext()));
             addView(getAdapter().makeView(getContext()));
+        }
+
+        if (checkNoAnimCondtions()) {
+            stopSwitcher();
+            return;
         }
 
         if (!mIsRunning) {
