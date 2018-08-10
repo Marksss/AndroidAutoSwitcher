@@ -82,8 +82,6 @@ public class ContinuousStrategyBuilder {
                 withEnd(new SingleOperator() {
                     @Override
                     public void operate(AutoSwitchView switcher, ChainOperator operator) {
-                        switcher.getCurrentView().setVisibility(View.GONE);
-                        switcher.getPreviousView().setVisibility(View.GONE);
                         if (operator.getStoppingMembers() != null) {
                             for (Object obj : operator.getStoppingMembers()) {
                                 ((ValueAnimator) obj).cancel();
