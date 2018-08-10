@@ -87,6 +87,15 @@ public class AutoSwitchView extends BaseSwitchView {
         super.setVisibility(visibility);
     }
 
+    @Override
+    public void setDisplayedItem(int itemIndex) {
+        // Cancel animations or delays when user choose one of items
+        if (mIsRunning) {
+            stopSwitcher();
+        }
+        super.setDisplayedItem(itemIndex);
+    }
+
     /**
      * @return
      *

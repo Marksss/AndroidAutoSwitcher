@@ -88,7 +88,7 @@ public class BaseSwitchView extends FrameLayout {
      *
      * @param itemIndex
      */
-    protected void setDisplayedItem(int itemIndex) {
+    public void setDisplayedItem(int itemIndex) {
         final int count = getChildCount();
         final View currentView = getCurrentView();
         for (int i = 0; i < count; i++) {

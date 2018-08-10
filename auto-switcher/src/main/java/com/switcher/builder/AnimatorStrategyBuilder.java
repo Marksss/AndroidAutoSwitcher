@@ -44,6 +44,10 @@ public class AnimatorStrategyBuilder {
                     @Override
                     public void operate(AutoSwitchView switcher, ChainOperator operator) {
                         operator.showNextWithInterval(mInterval);
+                        View childShow = switcher.getCurrentView();
+                        childShow.setX(0);
+                        childShow.setY(0);
+                        childShow.setAlpha(1f);
                     }
                 }).
                 next(new SingleOperator() {

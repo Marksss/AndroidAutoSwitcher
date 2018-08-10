@@ -53,7 +53,7 @@ public class SwitchStrategy implements ChainOperator {
     public void onStop(){
         if (!mIsStopped) {
             mHandler.removeCallbacksAndMessages(null);
-            if (mStopStep != null && mCancelMembers != null) {
+            if (mStopStep != null) {
                 mStopStep.operate(mSwitcher, this);
             }
         }
