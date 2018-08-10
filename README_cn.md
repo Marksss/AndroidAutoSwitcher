@@ -80,3 +80,5 @@ new SwitchStrategy.BaseBuilder().
         }
     }).build();
 ```
+## 许可证
+AutoSwitchView基于 [Apache License Version 2.0](LICENSE) 发布。

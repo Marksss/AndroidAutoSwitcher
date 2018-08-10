@@ -80,3 +80,5 @@ new SwitchStrategy.BaseBuilder().
         }
     }).build();
 ```
+## License
+AutoSwitchView is released under the [Apache License Version 2.0](LICENSE).
