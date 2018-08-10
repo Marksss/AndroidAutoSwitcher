@@ -88,7 +88,7 @@ public class BaseSwitchView extends FrameLayout {
      *
      * @param itemIndex
      */
-    public void setDisplayedItem(int itemIndex) {
+    protected void setDisplayedItem(int itemIndex) {
         final int count = getChildCount();
         final View currentView = getCurrentView();
         for (int i = 0; i < count; i++) {
@@ -105,6 +105,15 @@ public class BaseSwitchView extends FrameLayout {
         }
     }
 
+    /**
+     * call before we need to update view immediately
+     */
+    public void clearTags(){
+        for (int i = 0;i < getChildCount();i++){
+            getChildAt(i).setTag(-1);
+        }
+    }
+
     public View getCurrentView(){
         return getChildAt(Utils.getIndexInLoop(mWhichChild, 0, getChildCount()));
     }
@@ -115,6 +124,14 @@ public class BaseSwitchView extends FrameLayout {
 
     public View getPreviousView(){
         return getChildAt(Utils.getIndexInLoop(mWhichChild - 1, 0, getChildCount()));
+    }
+
+    public void stepForward() {
+        mWhichChild = Utils.getIndexInLoop(mWhichChild + 1, 0, getChildCount());
+    }
+
+    public void stepBackward() {
+        mWhichChild = Utils.getIndexInLoop(mWhichChild - 1, 0, getChildCount());
     }
 
     private void updateView(View view, int index){

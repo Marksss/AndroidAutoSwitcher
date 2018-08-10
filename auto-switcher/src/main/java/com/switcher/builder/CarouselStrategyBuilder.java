@@ -110,8 +110,10 @@ public class CarouselStrategyBuilder {
                     public void operate(AutoSwitchView switcher, ChainOperator operator) {
                         switcher.getCurrentView().setX(0);
                         switcher.getCurrentView().setY(0);
+                        switcher.getCurrentView().setVisibility(View.VISIBLE);
                         switcher.getPreviousView().setX(0);
                         switcher.getPreviousView().setY(0);
+                        switcher.getPreviousView().setVisibility(View.GONE);
                         if (operator.getStoppingMembers() != null) {
                             for (Object obj : operator.getStoppingMembers()) {
                                 ((ViewPropertyAnimator) obj).cancel();

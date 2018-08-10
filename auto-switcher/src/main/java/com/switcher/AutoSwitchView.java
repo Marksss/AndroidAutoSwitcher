@@ -87,15 +87,6 @@ public class AutoSwitchView extends BaseSwitchView {
         super.setVisibility(visibility);
     }
 
-    @Override
-    public void setDisplayedItem(int itemIndex) {
-        // Cancel animations or delays when user choose one of items
-        if (mIsRunning) {
-            stopSwitcher();
-        }
-        super.setDisplayedItem(itemIndex);
-    }
-
     /**
      * @return
      *
@@ -181,9 +172,9 @@ public class AutoSwitchView extends BaseSwitchView {
     public void startSwitcher() {
         mHasRepeatedCount = 0;
 
-        if (getChildCount() == 0) {
-            addView(getAdapter().makeView(getContext()));
-            addView(getAdapter().makeView(getContext()));
+        if (getChildCount() == 0 && mAdapter != null) {
+            addView(mAdapter.makeView(getContext()));
+            addView(mAdapter.makeView(getContext()));
         }
 
         if (checkNoAnimCondtions()) {
@@ -224,6 +215,7 @@ public class AutoSwitchView extends BaseSwitchView {
                 showIntervalState();
             }
         }
+        clearTags();
         if (mSwitchListener != null) {
             mSwitchListener.switchEnd(this);
         }
@@ -255,7 +247,7 @@ public class AutoSwitchView extends BaseSwitchView {
 
     void stepOver() {
         // index of view ++
-        mWhichChild = Utils.getIndexInLoop(mWhichChild + 1, 0, getChildCount());
+        stepForward();
         if (mAdapter != null) {
             // index of item ++
             mAdapter.setCurrentItem(Utils.getIndexInLoop(mAdapter.getCurrentIndex() + 1, 0, mAdapter.getItemCount()));
