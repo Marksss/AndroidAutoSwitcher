@@ -4,14 +4,14 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-12%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=12)
-[![Version](https://img.shields.io/badge/Version-1.0.0-yellow.svg)](https://bintray.com/markshawn/com.github.markshawn/auto-switcher)
+[![Download](https://api.bintray.com/packages/markshawn/com.github.markshawn/auto-switcher/images/download.svg)](https://bintray.com/markshawn/com.github.markshawn/auto-switcher/_latestVersion)
 
 AutoSwitchView是一个能自由切换两个子控件的控件容器，相比于ViewFlipper，它支持子控件的复用，数据量大的情况下能有更好的性能。同时，相比于AdapterViewFlipper，它有更好的扩展性，支持自定义各种切换动画。 
 
 ![demo-gif](https://github.com/Marksss/AndroidAutoSwitcher/blob/master/gif/demo.gif)
 ## 用法
 ### 将以下依赖添加到 `build.gradle` 文件中
-```compile 'com.github.markshawn:auto-switcher:1.0.0'```
+```compile 'com.github.markshawn:auto-switcher:1.0.1'```
 ### XML中的代码
 ```
     <com.switcher.AutoSwitchView
