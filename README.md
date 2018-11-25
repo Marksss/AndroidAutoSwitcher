@@ -31,7 +31,7 @@ as.startSwitcher(); // If you have set autoStart true, this is not needed.
 ### Switching Strategy
 You can easily customize swtiching animations you like with SwitchStrategy. It supports both Animation and ObjectAnimator. Here are some builders of SwitchStrategy I have offered as follows.
 
- - AnimationStrategyBuilde:
+ - AnimationStrategyBuilder:
  customize your own animation with Animation;
  - AnimatorStrategyBuilder: 
  customize your own animation with ObjectAnimator;
