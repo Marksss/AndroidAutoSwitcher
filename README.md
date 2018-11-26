@@ -11,7 +11,7 @@ AutoSwitchView is a view that can automatically switch between two children (ite
 ![demo-gif](https://github.com/Marksss/AndroidAutoSwitcher/blob/master/gif/demo.gif)
 ## Usage
 ### Add the dependency to your project `build.gradle` file
-```compile 'com.github.markshawn:auto-switcher:1.0.1'```
+```compile 'com.github.markshawn:auto-switcher:1.2'```
 ### Code in XML
 ```
     <com.switcher.AutoSwitchView

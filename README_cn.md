@@ -11,7 +11,7 @@ AutoSwitchView是一个能自由切换两个子控件的控件容器，相比于
 ![demo-gif](https://github.com/Marksss/AndroidAutoSwitcher/blob/master/gif/demo.gif)
 ## 用法
 ### 将以下依赖添加到 `build.gradle` 文件中
-```compile 'com.github.markshawn:auto-switcher:1.0.1'```
+```compile 'com.github.markshawn:auto-switcher:1.2'```
 ### XML中的代码
 ```
     <com.switcher.AutoSwitchView
