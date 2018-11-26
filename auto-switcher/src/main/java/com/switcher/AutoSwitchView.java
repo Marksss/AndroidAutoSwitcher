@@ -184,6 +184,10 @@ public class AutoSwitchView extends BaseSwitchView {
         if (getChildCount() == 0 && mAdapter != null) {
             addView(mAdapter.makeView(getContext()));
             addView(mAdapter.makeView(getContext()));
+        } else {
+            for (int i = 0; i < getChildCount(); i++) {
+                getChildAt(i).setTag(null);
+            }
         }
 
         if (checkNoAnimCondtions()) {

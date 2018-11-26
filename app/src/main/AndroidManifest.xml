@@ -22,8 +22,6 @@
         <activity android:name="com.example.app.MainActivity">
         </activity>
 
-        <activity android:name="com.example.app.ListActivity">
-        </activity>
     </application>
 
 </manifest>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
@@ -7,11 +7,86 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
-    <Button
-        android:id="@+id/btn_start"
+    <com.switcher.AutoSwitchView
+        android:id="@+id/start_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="See more examples"/>
+        android:layout_gravity="center_horizontal"
+        app:switcher_repeatCount="-1"
+        app:switcher_autoStart="true"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:text="content:"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="15dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/start_banner"/>
+
+    <EditText
+        android:id="@+id/edt_content"
+        android:layout_width="0dp"
+        android:layout_height="49dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:background="@null"
+        android:hint="modify content"
+        android:singleLine="true"
+        android:textColorHint="#cccccc"
+        android:textColor="#535353"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toRightOf="@id/tv_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_content" />
+
+    <EditText
+        android:id="@+id/edt_count"
+        android:layout_width="0dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="10dp"
+        android:inputType="number"
+        android:background="@null"
+        android:hint="modify count"
+        android:singleLine="true"
+        android:textColorHint="#cccccc"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toLeftOf="@id/edt_content"
+        app:layout_constraintRight_toRightOf="@id/edt_content"
+        app:layout_constraintTop_toBottomOf="@id/edt_content" />
+
+    <TextView
+        android:id="@+id/tv_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:text="count:"
+        app:layout_constraintLeft_toLeftOf="@id/tv_content"
+        app:layout_constraintBaseline_toBaselineOf="@id/edt_count"/>
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Save changes"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edt_count"/>
+
+    <Button
+        android:id="@+id/btn_example"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="40dp"
+        android:text="More examples"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>

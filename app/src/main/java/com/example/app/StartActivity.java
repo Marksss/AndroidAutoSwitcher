@@ -1,22 +1,15 @@
 package com.example.app;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.EditText;
 
+import com.example.app.adapter.BannerAdapter2;
 import com.switcher.AutoSwitchView;
-import com.switcher.base.BaseSwitchView;
 import com.switcher.builder.CarouselStrategyBuilder;
-import com.switcher.builder.ContinuousStrategyBuilder;
 import com.switcher.builder.DirectionMode;
 
 /**
@@ -24,35 +17,49 @@ import com.switcher.builder.DirectionMode;
  */
 
 public class StartActivity extends Activity {
-
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            "android.permission.READ_EXTERNAL_STORAGE",
-            "android.permission.WRITE_EXTERNAL_STORAGE" };
+    private AutoSwitchView mAswBanner;
+    private EditText mContentEdt, mCountEdt;
+    private BannerAdapter2 mBannerAdapter = new BannerAdapter2();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        findViewById(R.id.btn_start).setOnClickListener(new View.OnClickListener() {
+        mContentEdt = (EditText) findViewById(R.id.edt_content);
+        mCountEdt = (EditText) findViewById(R.id.edt_count);
+        mAswBanner = (AutoSwitchView) findViewById(R.id.start_banner);
+        mAswBanner.setAdapter(mBannerAdapter);
+        mAswBanner.setSwitchStrategy(
+                new CarouselStrategyBuilder().
+                        setAnimDuration(900).
+                        setInterpolator(new AccelerateDecelerateInterpolator()).
+                        setMode(DirectionMode.right2Left).
+                        build()
+        );
+        findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int count = 0;
+                try {
+                    count = Integer.parseInt(mCountEdt.getText().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                mBannerAdapter.setCount(count);
+                mBannerAdapter.setTitle(mContentEdt.getText().toString());
+                mAswBanner.startSwitcher();
+            }
+        });
+
+        mContentEdt.setText(mBannerAdapter.getTitle());
+        mCountEdt.setText(mBannerAdapter.getCount()+"");
+
+        findViewById(R.id.btn_example).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(StartActivity.this, MainActivity.class));
             }
         });
-        verifyStoragePermissions(this);
-    }
-
-    public static void verifyStoragePermissions(Activity activity) {
-        try {
-            int permission = ActivityCompat.checkSelfPermission(activity,
-                    "android.permission.WRITE_EXTERNAL_STORAGE");
-            if (permission != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
