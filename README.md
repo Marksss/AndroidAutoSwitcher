@@ -9,7 +9,7 @@ English  |  [中文文档](README_cn.md)
 AutoSwitchView is a view that can automatically switch between two children (items). Compared to ViewFlipper, it has better stability for reusing its children when working on large data sets. Compared to AdapterViewFlipper, its expansibility is more excellent.
 
 ![demo-gif](https://github.com/Marksss/AndroidAutoSwitcher/blob/master/gif/demo.gif)
-## Usage
+##  Usage
 ### Add the dependency to your project `build.gradle` file
 ```compile 'com.github.markshawn:auto-switcher:1.2'```
 ### Code in XML
