@@ -4,14 +4,23 @@ English  |  [中文文档](README_cn.md)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-12%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=12)
-[![Download](https://api.bintray.com/packages/markshawn/com.github.markshawn/auto-switcher/images/download.svg)](https://bintray.com/markshawn/com.github.markshawn/auto-switcher/_latestVersion)
+[![Download](https://jitpack.io/v/Marksss/AndroidAutoSwitcher.svg)](https://jitpack.io/#Marksss/AndroidAutoSwitcher)
 
 AutoSwitchView is a view that can automatically switch between two children (items). Compared to ViewFlipper, it has better stability for reusing its children when working on large data sets. Compared to AdapterViewFlipper, its expansibility is more excellent.
 
 ![demo-gif](https://github.com/Marksss/AndroidAutoSwitcher/blob/master/gif/demo.gif)
 ## Usage
-### Add the dependency to your project `build.gradle` file
-```compile 'com.github.markshawn:auto-switcher:1.2'```
+### Add the JitPack repository to your build file
+```
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+### Add the dependency
+```implementation 'com.github.Marksss:AndroidAutoSwitcher:v1.2'```
 ### Code in XML
 ```
     <com.switcher.AutoSwitchView
